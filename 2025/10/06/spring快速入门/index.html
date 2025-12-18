@@ -1,0 +1,310 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>spring快速入门1 | EurekaYu</title><meta name="author" content="tangerineyu"><meta name="copyright" content="tangerineyu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="今天搓了一个简单的博客后端，然后之后准备学spring，今天借助gemini和博客简单了解一下spring里面的概念  优秀的设计都致力于一件事，解耦 开闭原则（OCP  Open&#x2F;Closed principle）  软件实体应该对扩展开放，对修改关闭，简单来讲就是不改变已有的稳定代码，添加新功能  依赖倒置原则（DIP dependence inversion principle）  高层模块">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring快速入门1">
+<meta property="og:url" content="https://tangerineyu.github.io/2025/10/06/spring%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="EurekaYu">
+<meta property="og:description" content="今天搓了一个简单的博客后端，然后之后准备学spring，今天借助gemini和博客简单了解一下spring里面的概念  优秀的设计都致力于一件事，解耦 开闭原则（OCP  Open&#x2F;Closed principle）  软件实体应该对扩展开放，对修改关闭，简单来讲就是不改变已有的稳定代码，添加新功能  依赖倒置原则（DIP dependence inversion principle）  高层模块">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg">
+<meta property="article:published_time" content="2025-10-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-18T10:28:20.476Z">
+<meta property="article:author" content="tangerineyu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg"><link rel="shortcut icon" href="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/1.jpg"><link rel="canonical" href="https://tangerineyu.github.io/2025/10/06/spring%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'spring快速入门1',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  isShuoshuo: false
+}</script><link rel="stylesheet" href="/css/my.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/mainColor/heoMainColor.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/poem.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img" style="background-image:url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg);background-repeat: no-repeat;background-position:center;"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+preloader.initLoading()
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/icat_change.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="web_bg" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">EurekaYu</span></a><a class="nav-page-title" href="/"><span class="site-name">spring快速入门1</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">spring快速入门1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-06T16:00:00.000Z" title="发表于 2025-10-07 00:00:00">2025-10-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-18T10:28:20.476Z" title="更新于 2025-12-18 18:28:20">2025-12-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>今天搓了一个简单的博客后端，然后之后准备学spring，今天借助gemini和博客简单了解一下spring里面的概念</p>
+<hr>
+<h2 id="优秀的设计都致力于一件事，解耦"><strong>优秀的设计都致力于一件事，解耦</strong></h2>
+<h3 id="开闭原则（OCP-Open-Closed-principle）">开闭原则（OCP  Open/Closed principle）</h3>
+<ul>
+<li>软件实体应该对扩展开放，对修改关闭，简单来讲就是不改变已有的稳定代码，添加新功能</li>
+</ul>
+<h3 id="依赖倒置原则（DIP-dependence-inversion-principle）">依赖倒置原则（DIP dependence inversion principle）</h3>
+<ul>
+<li>高层模块不应该依赖低层模块，两者都应该依赖于抽象（接口）。简单说就是：要面向接口编程，不要面向具体实现编程,想象一下电脑，电脑（高层模块）不关心你插进来的是U盘、鼠标还是键盘（低层模块/具体实现）。只要它们都符合USB接口规范，就能正常工作。</li>
+</ul>
+<h2 id="spring的8个模块">spring的8个模块</h2>
+<ul>
+<li>spring Core:核心容器，提供了Ioc和DI，负责管理spring中的bean</li>
+<li>spring Context：在core的基础上增加更多的功能</li>
+<li>spring ADP：面向切面编程</li>
+<li>spring DAO：数据访问对象</li>
+<li>spring ORM：对象关系映射</li>
+<li>spring Web MVC</li>
+<li>spring WebFlux</li>
+<li>spring Web</li>
+</ul>
+<h3 id="Ioc-控制反转">Ioc 控制反转</h3>
+<ul>
+<li>核心思想：将创建和管理对象的控制权交给了spring容器</li>
+</ul>
+<h3 id="DI-依赖注入">DI 依赖注入</h3>
+<p>依赖注入是实现控制反转的具体行动。<br>
+场景: 一个 Driver (司机) 类需要一辆 Car (车) 才能工作。<br>
+传统方式 (没有DI)<br>
+Driver 类需要自己主动去创建它所依赖的 Car 对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Driver</span> &#123;</span><br><span class="line">    <span class="comment">// 司机自己负责 new 一辆车，产生了紧密耦合</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">Car</span> <span class="variable">car</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Car</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">drive</span><span class="params">()</span> &#123;</span><br><span class="line">        car.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>问题: 这里的 Driver 和 Car 被紧紧地绑定在了一起。如果想让这个司机开卡车，就必须修改 Driver 类的内部代码，这违反了开闭原则。<br>
+Spring的方式 (使用DI)<br>
+Driver 类不再自己创建 Car，它只是声明“我需要一辆车”。具体的车由外部的 Spring容器 创建，并通过某种方式**“注入”**给 Driver。</p>
+<p>最常见的注入方式是构造函数注入：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Driver</span> &#123;</span><br><span class="line">    <span class="comment">// 司机不再自己new车，而是声明一个依赖</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Car car;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过构造函数，等待外部把一辆车“注入”进来</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Driver</span><span class="params">(Car injectedCar)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.car = injectedCar;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">drive</span><span class="params">()</span> &#123;</span><br><span class="line">        car.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>优势: Driver 类现在只依赖于 Car 这个抽象，而不关心具体的车是如何创建的。Spring容器负责创建 Car 对象，并把它“注入”到 Driver 中。这样，如果想换成卡车，只需修改Spring的配置，Driver 类的代码无需任何改动，完美实现了解耦。</p>
+<h3 id="AOP-面向切面编程">AOP 面向切面编程</h3>
+<ul>
+<li>核心思想：将横切关注点从业务中分离出来</li>
+<li>想象一下你要给一栋大楼里的很多房间（业务方法）都安装监控摄像头（通用功能，如日志）。<br>
+没有AOP: 你需要一个房间一个房间地进去，在墙上打洞，安装摄像头。如果房间很多，会非常麻烦。<br>
+使用AOP: 你设计了一套“中央监控系统”（切面 Aspect）。你只需要定义好“在哪些类型的房间门口安装”（切点 Pointcut）和“具体安装什么”（通知 Advice），系统就会自动完成所有安装工作。这使得你的房间本身保持干净，只关注自己的核心功能。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io">tangerineyu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io/2025/10/06/spring%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">https://tangerineyu.github.io/2025/10/06/spring%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://tangerineyu.github.io" target="_blank">EurekaYu</a>！</span></div></div><div class="tag_share"><div class="post-share"><div class="social-share" data-image="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/10/05/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" title="postgreSQL学习笔记（三）"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">postgreSQL学习笔记（三）</div></div><div class="info-2"><div class="info-item-1">聚合函数  对一组值进行计算，返回单个值，将多行数据压缩成一个统计结果  常用函数  COUNT(*):统计行数 SUM(colum) AVG(column)：计算平均值 MAX(column) MIN(column)  12345-- 计算总员工数SELECT COUNT(*) FROM employees;-- 计算公司月薪总支出SELECT SUM(salary) FROM employees; GROUP BY子句 用于将数据按一列或多列进行分组  在SELECT语句中出现的列，并且没被聚合函数包裹都必须出现在GROUP BY子句中  12345678SELECT    grouping_column,    aggregate_function(column_to_aggregate)FROM    table_nameGROUP BY    grouping_column; 窗口函数 不改变原始行数，在每一行后面添加聚合计算结果 GROUP...</div></div></div></a><a class="pagination-related" href="/2025/10/19/dp%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85/" title="dp完全背包.md"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">dp完全背包.md</div></div><div class="info-2"><div class="info-item-1"> 看代码随想录一直不太理解这两句话   如果求组合数就是外层for循环遍历物品，内层for遍历背包。 如果求排列数就是外层for遍历背包，内层for循环遍历物品。  为什么是这样？ 12345678// 求组合数// 外层循环：遍历物品（颜料）for (int item : items) &#123;    // 内层循环：遍历背包容量（货架格子）    for (int j = item; j &lt;= capacity; j++) &#123;        dp[j] += dp[j - item];    &#125;&#125; 第一轮 (拿出红色颜料)：你拿着红色颜料，从头到尾把货架上所有能刷的地方都刷一遍，更新一遍货架的状态。刷完后，你把红色颜料放回去，并且再也不碰它了。 第二轮 (拿出蓝色颜料)：你拿着蓝色颜料，在当前已经有了红色的货架的基础上，再把所有能刷的地方刷一遍。因为你固定了物品的使用顺序。你总是先用完所有可能的红色，再用蓝色，再用绿色。所以，你最终得到的方案里，颜色出现的顺序必然是 (红, 蓝, 绿)，你永远不会得到 (蓝, 红, 绿)...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">tangerineyu</div><div class="author-info-description">爱非虚妄，梦不荒唐</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/tangerineyu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，如果有什么加载不出来Ctrl + F5 / 刷新页面也许能解决</div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E7%A7%80%E7%9A%84%E8%AE%BE%E8%AE%A1%E9%83%BD%E8%87%B4%E5%8A%9B%E4%BA%8E%E4%B8%80%E4%BB%B6%E4%BA%8B%EF%BC%8C%E8%A7%A3%E8%80%A6"><span class="toc-number">1.</span> <span class="toc-text">优秀的设计都致力于一件事，解耦</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99%EF%BC%88OCP-Open-Closed-principle%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">开闭原则（OCP  Open&#x2F;Closed principle）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BE%9D%E8%B5%96%E5%80%92%E7%BD%AE%E5%8E%9F%E5%88%99%EF%BC%88DIP-dependence-inversion-principle%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">依赖倒置原则（DIP dependence inversion principle）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring%E7%9A%848%E4%B8%AA%E6%A8%A1%E5%9D%97"><span class="toc-number">2.</span> <span class="toc-text">spring的8个模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Ioc-%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC"><span class="toc-number">2.1.</span> <span class="toc-text">Ioc 控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DI-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5"><span class="toc-number">2.2.</span> <span class="toc-text">DI 依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOP-%E9%9D%A2%E5%90%91%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B"><span class="toc-number">2.3.</span> <span class="toc-text">AOP 面向切面编程</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="接口型函数"/></a><div class="content"><a class="title" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数">接口型函数</a><time datetime="2025-12-18T10:28:20.476Z" title="发表于 2025-12-18 18:28:20">2025-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go语言圣经第三章"/></a><div class="content"><a class="title" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章">Go语言圣经第三章</a><time datetime="2025-12-15T16:00:00.000Z" title="发表于 2025-12-16 00:00:00">2025-12-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存"/></a><div class="content"><a class="title" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存">缓存</a><time datetime="2025-11-29T16:00:00.000Z" title="发表于 2025-11-30 00:00:00">2025-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/16/JWT/" title="JWT"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JWT"/></a><div class="content"><a class="title" href="/2025/11/16/JWT/" title="JWT">JWT</a><time datetime="2025-11-16T16:00:00.000Z" title="发表于 2025-11-17 00:00:00">2025-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/15/gogogo/" title="go"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="go"/></a><div class="content"><a class="title" href="/2025/11/15/gogogo/" title="go">go</a><time datetime="2025-11-15T16:00:00.000Z" title="发表于 2025-11-16 00:00:00">2025-11-16</time></div></div></div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script></div></div></main><footer id="footer" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By tangerineyu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.isShuoshuo
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

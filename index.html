@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>EurekaYu</title><meta name="author" content="tangerineyu"><meta name="copyright" content="tangerineyu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="爱非虚妄，梦不荒唐">
+<meta property="og:type" content="website">
+<meta property="og:title" content="EurekaYu">
+<meta property="og:url" content="https://tangerineyu.github.io/index.html">
+<meta property="og:site_name" content="EurekaYu">
+<meta property="og:description" content="爱非虚妄，梦不荒唐">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg">
+<meta property="article:author" content="tangerineyu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg"><link rel="shortcut icon" href="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/1.jpg"><link rel="canonical" href="https://tangerineyu.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'EurekaYu',
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  isShuoshuo: false
+}</script><link rel="stylesheet" href="/css/my.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/mainColor/heoMainColor.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/poem.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img" style="background-image:url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg);background-repeat: no-repeat;background-position:center;"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+preloader.initLoading()
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/icat_change.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="web_bg" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">EurekaYu</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">EurekaYu</h1><div id="site-subtitle"><span id="subtitle"></span></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover left"><a href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="接口型函数"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数">接口型函数</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-12-18T10:28:20.476Z" title="发表于 2025-12-18 18:28:20">2025-12-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/go/">go</a></span></div><div class="content">最近在写极客兔兔的GeeCache这个小项目，在里面遇到了一段不太理解的代码， 1234567891011type Getter interface &#123;	Get(key string) ([]byte, error)&#125;// A GetterFunc implements Getter with a function.type GetterFunc func(key string) ([]byte, error)// Get implements Getter interface functionfunc (f GetterFunc) Get(key string) ([]byte, error) &#123;	return f(key)&#125; 结合兔兔的讲解,写一篇博客  本质是实现多态  接口只有一个方法，为什么不直接使用GetterFunc作为参数传进参数？ 12func GetFromSource(fn GetterFunc, key string)...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go语言圣经第三章"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章">Go语言圣经第三章</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-12-15T16:00:00.000Z" title="发表于 2025-12-16 00:00:00">2025-12-16</time></span></div><div class="content">3.1 整型 ^操作符在go中有两个作用：  作为两元操作符时：x ^ y，按位异或，不同为1,相同为0 作为前置应让运算符：^y，按位取反  &amp;^: z= x &amp;^ y, 如果y在某个位置是1,就把x对应位置的数归零，如果y在某个位置是0,x对应的数字不变 1fmt.Printf(&quot;%d %[1]o %#[1]o\n&quot;, o)  %[1]o: 以八进制打印第一个参数，[1]的意思是读取第一个参数，好处是不用多次传同一个参数 #： 对于对应进制会在前面强制补零  字符使用%c打印，带单引号的字符使用%q打印 1234567ascii := &#x27;a&#x27;unicode := &#x27;国&#x27;newline := &#x27;\n&#x27;fmt.Printf(&quot;%d %[1]c %[1]q\n&quot;, ascii)   // &quot;97 a &#x27;a&#x27;&quot;fmt.Printf(&quot;%d %[1]c %[1]q\n&quot;, unicode) //...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存">缓存</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-11-29T16:00:00.000Z" title="发表于 2025-11-30 00:00:00">2025-11-30</time></span></div><div class="content">缓存雪崩： 缓存在同一时刻全部失效，造成瞬时DB请求量大、压力骤增，引起雪崩。缓存雪崩通常因为缓存服务器宕机、缓存的 key 设置了相同的过期时间等引起。 缓存击穿： 一个存在的key，在缓存过期的一刻，同时有大量的请求，这些请求都会击穿到 DB ，造成瞬时DB请求量大、压力骤增。 缓存穿透： 查询一个不存在的数据，因为不存在则不会写到缓存中，所以每次都会去请求 DB，如果瞬间流量过大，穿透到 DB，导致宕机。  解决方案：SingleFlight（单次飞行）  无论有多少个并发请求问同一个 Key，在“缓存失效”的那个瞬间，我只放一个请求去查数据库。其他请求全部阻塞等待，等第一个请求查回来，大家共享这个结果。 </div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/11/16/JWT/" title="JWT"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JWT"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/16/JWT/" title="JWT">JWT</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-11-16T16:00:00.000Z" title="发表于 2025-11-17 00:00:00">2025-11-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/go/">go</a></span></div><div class="content">JWT(JSON Web Token)是一个自包含，可签名额字符串，常用于鉴权 结构： 1HEADER.PAYLOAD.SIGNATURE HEADER：描述算法如HS256 Patload(Claims): 放自定义字段和标准字段，比如用户ID，过期时间，这个是外部可读的 Signature：对 header+payload 用密钥/私钥签名，保证不可篡改  AccessToken: 短期，用于日常访问，包含用户信息 RefreshToken： 长期，用于换新的accessToken，包含少量信息  JWT工作流程: 用户登录服务器，后端签发accessToken和refreshToken，前端保存token，每次访问接口时带上token，后端验证accessToken,通过则返回数据，如果accessToken过期了，前端自动使用RefreshToken获取新的accessToken，如果refreshToken也过期了，用户要重新登陆 </div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/11/15/gogogo/" title="go"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="go"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/15/gogogo/" title="go">go</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-11-15T16:00:00.000Z" title="发表于 2025-11-16 00:00:00">2025-11-16</time></span></div><div class="content">思来想去，最后还是决定放弃java去写go了，一方面是java确实比较卷，卷王扎堆，但是更主要的还是自己不喜欢写java。 自己最早其实从7月的时候就有这个想法了，但是当时没有下定决心，而且当时在学cs61b，这门课使用java，所以当时的决定还是继续java，后面开学了开始学框架，看黑马写项目，结果越来越焦虑，经常写着写着就破防了，当时对java就很讨厌了，但是考虑到自己已经学了不少java的技术栈，有一个沉没成本的问题，还是硬着头皮写了一个月把苍穹外卖做了，最后痛苦越来越多，我对学习java已经没有任何兴趣，完全是焦虑驱动学习，在最后一次破防摆烂了几天后，决定转go，那天是11月8号，到现在9天，用了2天学了基础的语法，然后简单的了解了一些go的爬虫，就开始学gin和gorm，之后开始用框架错了一个简单的备忘录后端，这几天的感觉前所未有的好，只能说为什么不早点去学go </div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/11/15/kmp/" title="KMP算法"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="KMP算法"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/15/kmp/" title="KMP算法">KMP算法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-11-15T16:00:00.000Z" title="发表于 2025-11-16 00:00:00">2025-11-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a><i class="fas fa-angle-right article-meta-link"></i><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%8A%80%E6%9C%AF/%E7%AE%97%E6%B3%95/">算法</a></span></div><div class="content">解决在主串中快速匹配子串的问题 传统暴力算法每次失败都要从头开始，时间复杂度是$$ O(m * n) $$,效率比较差  核心思想：利用已经匹配过的信息，避免主串指针回退，从而加速匹配 KMP是如何实现优化的呢？   前缀表 next[i] = 当 needle[0..i]不匹配时，应跳回的下一个可匹配位置（前缀长度）  假设我们匹配： 12345678910111213主串：  ABC ABCDAB ABCDABCDABDE子串：     ABCDABD当匹配到：ABCDAB **E**ABCDAB **D**在 E != D 时：暴力算法会回到开头：   ABCDAB E-&gt; A 但 KMP 会使用 next 数组得知： 已匹配的 “ABCDAB” 中前缀和后缀的最长相等部分是 “AB”（长度 2） 所以只需跳回到 needle[2] 继续匹配，而无须重来。 这大幅减少了重复比较。  为什么next数组可以帮助跳位置 因为next[i]表示的是以 i...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/11/14/ubuntu%E6%96%B0%E5%A2%9E%E6%8C%82%E8%BD%BD%E5%8D%B7/" title="ubuntu挂载新分区"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ubuntu挂载新分区"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/11/14/ubuntu%E6%96%B0%E5%A2%9E%E6%8C%82%E8%BD%BD%E5%8D%B7/" title="ubuntu挂载新分区">ubuntu挂载新分区</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-11-14T16:00:00.000Z" title="发表于 2025-11-15 00:00:00">2025-11-15</time></span></div><div class="content">我使用的是windows11与ubuntu22.04双系统，当时装ubuntu的时候还是以windows做主力的，所以内存只分了100G，现在ubuntu使用的越来越多，windows好几天才启动一次，100G的空间有点不够用了，就想扩容一下 最开始还是想直接分到根目录下的，找了找教程，有点麻烦，而且有挺大的风险，于是就找了这个替代方案   从windows压缩空间： win + x进入磁盘管理，找到空闲空间比较大的盘，右键选择压缩卷，输入想要给ubuntu的空间大小 点击压缩，等待一会就可以看间出现了一块未分配的空间   在ubuntu上挂载： 打开disks，可以看见在windows创建出来的未分配空间， 点击下面的+创建新分区 创建分区时类型要选择Ext4   设置自动挂载 点击刚刚设置好得分区下面的齿轮图标，选择“编辑挂载选项”，关闭用户会话默认设置，勾选“在系统启动时挂载”，命名挂载点，确定   新挂载的分区默认只有root才能写入，所以要修改所有权 sudo mkdir 挂载点 sudo mount -a挂载新分区 sudo chown -R...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/10/26/reset/" title="reset"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="reset"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/10/26/reset/" title="reset">reset</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-26T16:00:00.000Z" title="发表于 2025-10-27 00:00:00">2025-10-27</time></span></div><div class="content">前些天一直在学苍穹外卖，一开始只是因为redis的测试一直无法运行，就照着ai一顿瞎搞，最后成功的把代码弄乱了，想着reset到上次提交的版本吧，自己当时有点后悔为什么没有多commit几次，基本是3天的内容没了，不过也还好，但是的自己很快就接受了。自己对回滚的操作并不熟悉，就再次询问AI，再次相信了它，结果执行了clean命令，删除了一些文件，导致项目再次无法启动，当时以为这个项目彻底废了，直接破防，玩了两天别的东西，今天抢救一下，还好只是丢了一些修改，无伤大雅。 这次也是涨个教训吧，一定要多commit，还有就是不要无脑信ai的话，因为自己的描述可能有问题，它不了解实际场景。 </div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2025/10/25/docker%E5%AD%A6%E4%B9%A0/" title="docker"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/10/25/docker%E5%AD%A6%E4%B9%A0/" title="docker">docker</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-25T16:00:00.000Z" title="发表于 2025-10-26 00:00:00">2025-10-26</time></span></div><div class="content">docker与虚拟机的区别 虚拟机是模拟硬件创建虚拟操作系统，运行多个虚拟机就是运行多个操作系统，docker还是使用宿主机的操作系统 容器与镜像  镜像是程序安装包，容器是运行中的程序，一个镜像可以run出多个容器  常用命令 12345678910111213#我们可以使用docker pull images#从仓库下载到本地，要启动镜像的容器输入`run`命令#查看当前容器列表docker ps -a#开启停止状态的容器docker start &lt;容器名称/容器ID&gt;#停止容器直接输入stop命令 docker stop &lt;容器名称/容器ID&gt;#如果我们不需要使用容器了，那么可以将容器删除，但是注意只有容器处于非运行状态时才可以删除：docker rm &lt;容器名称/容器ID&gt;#容器在停止后自动删除，我们可以在运行时添加--rm参数：docker run --rm 镜像名称 构建镜像 dockerfile  FROM： 一个dockerfile必须以FROM指令开始 作用：指定基础镜像 COPY 作用：将你宿主机 (你电脑)...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2025/10/19/dp%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85/" title="dp完全背包.md"><img class="post-bg" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="dp完全背包.md"></a></div><div class="recent-post-info"><a class="article-title" href="/2025/10/19/dp%E5%AE%8C%E5%85%A8%E8%83%8C%E5%8C%85/" title="dp完全背包.md">dp完全背包.md</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-19T16:00:00.000Z" title="发表于 2025-10-20 00:00:00">2025-10-20</time></span></div><div class="content"> 看代码随想录一直不太理解这两句话   如果求组合数就是外层for循环遍历物品，内层for遍历背包。 如果求排列数就是外层for遍历背包，内层for循环遍历物品。  为什么是这样？ 12345678// 求组合数// 外层循环：遍历物品（颜料）for (int item : items) &#123;    // 内层循环：遍历背包容量（货架格子）    for (int j = item; j &lt;= capacity; j++) &#123;        dp[j] += dp[j - item];    &#125;&#125; 第一轮 (拿出红色颜料)：你拿着红色颜料，从头到尾把货架上所有能刷的地方都刷一遍，更新一遍货架的状态。刷完后，你把红色颜料放回去，并且再也不碰它了。 第二轮 (拿出蓝色颜料)：你拿着蓝色颜料，在当前已经有了红色的货架的基础上，再把所有能刷的地方刷一遍。因为你固定了物品的使用顺序。你总是先用完所有可能的红色，再用蓝色，再用绿色。所以，你最终得到的方案里，颜色出现的顺序必然是 (红, 蓝, 绿)，你永远不会得到 (蓝, 红, 绿)...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">tangerineyu</div><div class="author-info-description">爱非虚妄，梦不荒唐</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/tangerineyu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，如果有什么加载不出来Ctrl + F5 / 刷新页面也许能解决</div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="接口型函数"/></a><div class="content"><a class="title" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数">接口型函数</a><time datetime="2025-12-18T10:28:20.476Z" title="发表于 2025-12-18 18:28:20">2025-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go语言圣经第三章"/></a><div class="content"><a class="title" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章">Go语言圣经第三章</a><time datetime="2025-12-15T16:00:00.000Z" title="发表于 2025-12-16 00:00:00">2025-12-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存"/></a><div class="content"><a class="title" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存">缓存</a><time datetime="2025-11-29T16:00:00.000Z" title="发表于 2025-11-30 00:00:00">2025-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/16/JWT/" title="JWT"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JWT"/></a><div class="content"><a class="title" href="/2025/11/16/JWT/" title="JWT">JWT</a><time datetime="2025-11-16T16:00:00.000Z" title="发表于 2025-11-17 00:00:00">2025-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/15/gogogo/" title="go"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="go"/></a><div class="content"><a class="title" href="/2025/11/15/gogogo/" title="go">go</a><time datetime="2025-11-15T16:00:00.000Z" title="发表于 2025-11-16 00:00:00">2025-11-16</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/go/"><span class="card-category-list-name">go</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/"><span class="card-category-list-name">技术</span><span class="card-category-list-count">2</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/go/"><span class="card-category-list-name">go</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF/%E7%AE%97%E6%B3%95/"><span class="card-category-list-name">算法</span><span class="card-category-list-count">1</span></a></li></ul></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/KMP/" style="font-size: 1.1em; color: #999">KMP</a> <a href="/tags/JWT/" style="font-size: 1.1em; color: #999">JWT</a> <a href="/tags/postgreSQL/" style="font-size: 1.5em; color: #99a9bf">postgreSQL</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+    <ul class="card-archive-list">
+  
+      <li class="card-archive-list-item">
+        <a class="card-archive-list-link" href="/archives/2025/12/">
+          <span class="card-archive-list-date">十二月 2025</span>
+          <span class="card-archive-list-count">2</span>
+        </a>
+      </li>
+    
+      <li class="card-archive-list-item">
+        <a class="card-archive-list-link" href="/archives/2025/11/">
+          <span class="card-archive-list-date">十一月 2025</span>
+          <span class="card-archive-list-count">5</span>
+        </a>
+      </li>
+    
+      <li class="card-archive-list-item">
+        <a class="card-archive-list-link" href="/archives/2025/10/">
+          <span class="card-archive-list-date">十月 2025</span>
+          <span class="card-archive-list-count">8</span>
+        </a>
+      </li>
+    </ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">15</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2025-12-18T10:28:31.379Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script></div></div></main><footer id="footer" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By tangerineyu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/typed.js/2.0.12/typed.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  if (true) {
+    typedJSFn.init(["求索不止","Never stop seeking"])
+  } else {
+    document.getElementById("subtitle").textContent = "求索不止"
+  }
+}
+typedJSFn.run(subtitleType)</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

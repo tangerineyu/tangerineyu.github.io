@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>postgreSQL学习笔记（一） | EurekaYu</title><meta name="author" content="tangerineyu"><meta name="copyright" content="tangerineyu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="postgreSQL学习笔记（一）  这学期有一门课程是数据库，外教老师实在一言难尽，只好自学，看了菜鸟教程云里雾里的，然后又不喜欢看视频学习，就让gemini来教我，效果还不错 基础环境  创建数据路 CREATE DATABASE datebase_name; 切换数据库 \c database_name; 查看表结构 \d table_name; 创建表 CREATE TABLE table">
+<meta property="og:type" content="article">
+<meta property="og:title" content="postgreSQL学习笔记（一）">
+<meta property="og:url" content="https://tangerineyu.github.io/2025/10/03/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
+<meta property="og:site_name" content="EurekaYu">
+<meta property="og:description" content="postgreSQL学习笔记（一）  这学期有一门课程是数据库，外教老师实在一言难尽，只好自学，看了菜鸟教程云里雾里的，然后又不喜欢看视频学习，就让gemini来教我，效果还不错 基础环境  创建数据路 CREATE DATABASE datebase_name; 切换数据库 \c database_name; 查看表结构 \d table_name; 创建表 CREATE TABLE table">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg">
+<meta property="article:published_time" content="2025-10-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-18T10:28:20.476Z">
+<meta property="article:author" content="tangerineyu">
+<meta property="article:tag" content="postgreSQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg"><link rel="shortcut icon" href="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/1.jpg"><link rel="canonical" href="https://tangerineyu.github.io/2025/10/03/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'postgreSQL学习笔记（一）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  isShuoshuo: false
+}</script><link rel="stylesheet" href="/css/my.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/mainColor/heoMainColor.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/poem.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img" style="background-image:url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg);background-repeat: no-repeat;background-position:center;"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+preloader.initLoading()
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/icat_change.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="web_bg" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">EurekaYu</span></a><a class="nav-page-title" href="/"><span class="site-name">postgreSQL学习笔记（一）</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">postgreSQL学习笔记（一）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-03T16:00:00.000Z" title="发表于 2025-10-04 00:00:00">2025-10-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-18T10:28:20.476Z" title="更新于 2025-12-18 18:28:20">2025-12-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="postgreSQL学习笔记（一）">postgreSQL学习笔记（一）</h1>
+<hr>
+<p>这学期有一门课程是数据库，外教老师实在一言难尽，只好自学，看了菜鸟教程云里雾里的，然后又不喜欢看视频学习，就让gemini来教我，效果还不错</p>
+<h2 id="基础环境">基础环境</h2>
+<ul>
+<li>创建数据路<br>
+<code>CREATE DATABASE datebase_name;</code></li>
+<li>切换数据库<br>
+<code>\c database_name;</code></li>
+<li>查看表结构<br>
+<code>\d table_name;</code></li>
+<li>创建表<br>
+<code>CREATE TABLE table_name;</code></li>
+</ul>
+<h2 id="数据操作">数据操作</h2>
+<ul>
+<li>插入数据：<code>INSERT INTO;</code></li>
+<li>查询数据：<code>SELECT column1,column2 FROM table_name;</code></li>
+<li>修改数据：<code>UPDATE table_name SET column1 = new_value1 WHERE condition;</code></li>
+<li>删除数据：必须使用where指定删除哪一行，否则会删除整个表</li>
+<li><code>DELETE FROM table_name WHERE condition;</code></li>
+</ul>
+<h2 id="数据查询与表的结构修改">数据查询与表的结构修改</h2>
+<ul>
+<li>
+<p>条件查询<br>
+<code>SEWLECT * FROM table_name WHERE condition1 AND/OR condition2;</code></p>
+</li>
+<li>
+<p>结果排序<br>
+<code>SELECT * FROM table_name ORDER BY column_name ASC/DESC</code><br>
+<code>ASC</code>(默认):升序</p>
+</li>
+<li>
+<p>修改结构<br>
+<code>ALTER TABLE table_name ADD COLUMN column_name data_type</code></p>
+</li>
+<li>
+<p>主键</p>
+<blockquote>
+<p>作用: 唯一标识表中的每一行，其值必须唯一且不能为空 (NOT NULL)。<br>
+添加方式: ALTER TABLE table_name ADD PRIMARY KEY (column_name);</p>
+</blockquote>
+</li>
+<li>
+<p>自动递增主键 (SERIAL):</p>
+<blockquote>
+<p>作用: PostgreSQL特有的类型，用于创建一个自动递增的整数主键。插入新数据时无需手动指定ID。</p>
+</blockquote>
+<p><code>id SERIAL PRIMARY KEY</code></p>
+<blockquote>
+<p>示例:<br>
+<code>CREATE TABLE students (         id SERIAL PRIMARY KEY,         name VARCHAR(100)     );     -- 插入时无需提供id     INSERT INTO students (name) VALUES ('小明');</code></p>
+</blockquote>
+</li>
+</ul>
+<h2 id="多表联查">多表联查</h2>
+<ul>
+<li>
+<h3 id="外键">外键</h3>
+<pre><code>-作用: 用于将一张表中的列与另一张表的主键关联起来，保证数据的引用完整性。
+</code></pre>
+<code>CREATE TABLE books (     id SERIAL PRIMARY KEY,     title VARCHAR(255),     author_id INT,     FOREIGN KEY (author_id) REFERENCES     authors(id) );</code></li>
+<li>
+<h3 id="JOIN">JOIN</h3>
+<ul>
+<li>内连接 <code>INNER JOIN</code><br>
+返回两张表中能通过关联条件匹配上的数据。</li>
+<li>左连接 <code>LEFT JOIN</code><br>
+作用：返回左面表的所有记录，以及右边表中能匹配上的记录。如果右边表没有匹配项，则用 NULL 填充。</li>
+</ul>
+</li>
+<li>
+<h3 id="子查询">子查询</h3>
+<ul>
+<li>返回单个值的子查询：
+<ul>
+<li>返回一个值可以使用’='等比较运算符</li>
+<li><code>... WHERE column = (SELECT single_value_column FROM ...);</code></li>
+</ul>
+</li>
+<li>返回列表的子查询：
+<ul>
+<li>必须用 <code>IN</code> 或 <code>NOT IN</code></li>
+<li><code>... WHERE column IN (SELECT list_column FROM ...);</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<h3 id="通用表表达式（CTE）">通用表表达式（CTE）</h3>
+<ul>
+<li>使用<code>WITH</code>关键字定义一个临时的查询结果集，将复杂的查询拆分</li>
+<li><code>WITH cte_name AS ( SELECT ... -- 这里是子查询的逻辑 ) SELECT ... FROM cte_name ...; -- 在主查询中使用这个临时表</code></li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io">tangerineyu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io/2025/10/03/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">https://tangerineyu.github.io/2025/10/03/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://tangerineyu.github.io" target="_blank">EurekaYu</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/postgreSQL/">postgreSQL</a></div><div class="post-share"><div class="social-share" data-image="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/10/03/leetcode5%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/" title="力扣HOT100/最长回文子串"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">力扣HOT100/最长回文子串</div></div><div class="info-2"><div class="info-item-1">比较难懂的一道题，我看题解看了半天才想明白 题目链接 第一想法是暴力枚举所有的子串，然后判断是否回文，但是太过复杂，判断子串回文要O(n)O(n)O(n),一共有O(n2)O(n ^ 2)O(n2)的子串，整体的时间复杂度就是O(n3)O(n ^ 3)O(n3) ，有点慢 方法一：中心扩展法 回文串无论长短都是中心对称的，这个方法就是遍历中心，然后不断扩展，唯一注意的就是回文串长度是奇数还是偶数，奇数是以字符为中心，而偶数就是以字符间的缝隙为中心，所以循环遍历的条件是i &lt; 2 * n - 1 方法二：Manacher算法 </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/10/04/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%20%EF%BC%88%E4%BA%8C%EF%BC%89/" title="postgreSQL学习笔记（二）"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-05</div><div class="info-item-2">postgreSQL学习笔记（二）</div></div><div class="info-2"><div class="info-item-1">性能优化-索引  索引可以提升数据库查询性能 索引是预先创建的一种有序的数据结构  创建索引 CREATE INDEX index_name ON table_name (column_name); 验证索引是否生效 EXPLAIN SELECT * FROM table_name WHERE indexed_column = 'some_value';  Seq Scan表示使用全表扫描没用索引 Index Scan表示成功使用索引   索引的好处说完了，代价呢？  空间成本：会占用额外的硬盘空间 维护成本：虽然增加了查询SELECT的速度,但是当数据库要INSERT,UPDATE,DELETE等操作时，还要额外操作索引，降低写操作的速度  使用原则  给谁用  出现在WHERE子句的列 使用JOINd的列 使用ORDER BY的列   谁慎用  写的操作比较多的列 值的重复度比较高的列（比如值是性别）    索引失效 通配符在前面的时候，索引会失效 WHERE name LIKE '张%'; – 能使用索引 (从目录的’Z’部分开始找)。 WHERE name LIKE...</div></div></div></a><a class="pagination-related" href="/2025/10/05/postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" title="postgreSQL学习笔记（三）"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-06</div><div class="info-item-2">postgreSQL学习笔记（三）</div></div><div class="info-2"><div class="info-item-1">聚合函数  对一组值进行计算，返回单个值，将多行数据压缩成一个统计结果  常用函数  COUNT(*):统计行数 SUM(colum) AVG(column)：计算平均值 MAX(column) MIN(column)  12345-- 计算总员工数SELECT COUNT(*) FROM employees;-- 计算公司月薪总支出SELECT SUM(salary) FROM employees; GROUP BY子句 用于将数据按一列或多列进行分组  在SELECT语句中出现的列，并且没被聚合函数包裹都必须出现在GROUP BY子句中  12345678SELECT    grouping_column,    aggregate_function(column_to_aggregate)FROM    table_nameGROUP BY    grouping_column; 窗口函数 不改变原始行数，在每一行后面添加聚合计算结果 GROUP...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">tangerineyu</div><div class="author-info-description">爱非虚妄，梦不荒唐</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/tangerineyu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，如果有什么加载不出来Ctrl + F5 / 刷新页面也许能解决</div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#postgreSQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">postgreSQL学习笔记（一）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83"><span class="toc-number">1.1.</span> <span class="toc-text">基础环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.</span> <span class="toc-text">数据操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E4%B8%8E%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84%E4%BF%AE%E6%94%B9"><span class="toc-number">1.3.</span> <span class="toc-text">数据查询与表的结构修改</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E8%A1%A8%E8%81%94%E6%9F%A5"><span class="toc-number">1.4.</span> <span class="toc-text">多表联查</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%96%E9%94%AE"><span class="toc-number">1.4.1.</span> <span class="toc-text">外键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JOIN"><span class="toc-number">1.4.2.</span> <span class="toc-text">JOIN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.4.3.</span> <span class="toc-text">子查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E8%A1%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%88CTE%EF%BC%89"><span class="toc-number">1.4.4.</span> <span class="toc-text">通用表表达式（CTE）</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="接口型函数"/></a><div class="content"><a class="title" href="/2025/12/18/%E6%8E%A5%E5%8F%A3%E5%9E%8B%E5%87%BD%E6%95%B0/" title="接口型函数">接口型函数</a><time datetime="2025-12-18T10:28:20.476Z" title="发表于 2025-12-18 18:28:20">2025-12-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go语言圣经第三章"/></a><div class="content"><a class="title" href="/2025/12/15/%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%AC%A6%E5%8F%B7/" title="Go语言圣经第三章">Go语言圣经第三章</a><time datetime="2025-12-15T16:00:00.000Z" title="发表于 2025-12-16 00:00:00">2025-12-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存"/></a><div class="content"><a class="title" href="/2025/11/29/%E7%BC%93%E5%AD%98/" title="缓存">缓存</a><time datetime="2025-11-29T16:00:00.000Z" title="发表于 2025-11-30 00:00:00">2025-11-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/16/JWT/" title="JWT"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JWT"/></a><div class="content"><a class="title" href="/2025/11/16/JWT/" title="JWT">JWT</a><time datetime="2025-11-16T16:00:00.000Z" title="发表于 2025-11-17 00:00:00">2025-11-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/15/gogogo/" title="go"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="go"/></a><div class="content"><a class="title" href="/2025/11/15/gogogo/" title="go">go</a><time datetime="2025-11-15T16:00:00.000Z" title="发表于 2025-11-16 00:00:00">2025-11-16</time></div></div></div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script></div></div></main><footer id="footer" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By tangerineyu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.isShuoshuo
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
