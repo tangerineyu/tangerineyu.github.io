@@ -1,0 +1,610 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>计算机网络-网络层 | EurekaYu</title><meta name="author" content="tangerineyu"><meta name="copyright" content="tangerineyu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="网络层 湖科大计网 分类编址的IPv4地址  A类地址 最小网络号为0, 保留不指派 第一个可指派的网络号为1, 网络地址为1.0.0.0 最大网络号为127, 作为本地环回测试地址，不指派  最小的本地环回测试地址为127.0.0.1 最大的本地环回测试地址为127.255.255.254 最后一个可指派的网络号为126  可指派的网络的数量为126， 每个网络中可以分配的IP地址数量为2^24">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络-网络层">
+<meta property="og:url" content="https://tangerineyu.github.io/2026/01/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.html">
+<meta property="og:site_name" content="EurekaYu">
+<meta property="og:description" content="网络层 湖科大计网 分类编址的IPv4地址  A类地址 最小网络号为0, 保留不指派 第一个可指派的网络号为1, 网络地址为1.0.0.0 最大网络号为127, 作为本地环回测试地址，不指派  最小的本地环回测试地址为127.0.0.1 最大的本地环回测试地址为127.255.255.254 最后一个可指派的网络号为126  可指派的网络的数量为126， 每个网络中可以分配的IP地址数量为2^24">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-3q3z9d.webp">
+<meta property="article:published_time" content="2026-01-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-02T13:41:15.260Z">
+<meta property="article:author" content="tangerineyu">
+<meta property="article:tag" content="计网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-3q3z9d.webp"><link rel="shortcut icon" href="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/1.jpg"><link rel="canonical" href="https://tangerineyu.github.io/2026/01/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '计算机网络-网络层',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  isShuoshuo: false
+}</script><link rel="stylesheet" href="/css/my.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/mainColor/heoMainColor.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/poem.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img" style="background-image:url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg);background-repeat: no-repeat;background-position:center;"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+preloader.initLoading()
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/icat_change.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="web_bg" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-3q3z9d.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">EurekaYu</span></a><a class="nav-page-title" href="/"><span class="site-name">计算机网络-网络层</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">计算机网络-网络层</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-23T16:00:00.000Z" title="发表于 2026-01-24 00:00:00">2026-01-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-02-02T13:41:15.260Z" title="更新于 2026-02-02 21:41:15">2026-02-02</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h3 id="网络层">网络层</h3>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1c4411d7jb?spm_id_from=333.788.player.switch&amp;vd_source=e5201fb199b25d68c383fec45484b73b&amp;p=44">湖科大计网</a></p>
+<h4 id="分类编址的IPv4地址">分类编址的IPv4地址</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/%E6%88%AA%E5%9B%BE%202026-01-24%2018-05-56.webp" alt=""></p>
+<h5 id="A类地址">A类地址</h5>
+<p>最小网络号为0, 保留不指派<br>
+第一个可指派的网络号为1, 网络地址为1.0.0.0<br>
+最大网络号为127, 作为本地环回测试地址，不指派</p>
+<ul>
+<li>最小的本地环回测试地址为127.0.0.1</li>
+<li>最大的本地环回测试地址为127.255.255.254<br>
+最后一个可指派的网络号为126</li>
+</ul>
+<p>可指派的网络的数量为126， 每个网络中可以分配的IP地址数量为<code>2^24 - 2 = 16777214 </code>(减2是取出全0的网络地址和全1的广播地址）</p>
+<h5 id="B类">B类</h5>
+<p>最小网络号128, 最大网络号191.255<br>
+可指派网络数为2 ^ (16 - 2) = 16384， 每个网络中可分配的IP地址数量为2 ^ 16 - 2 = 65534</p>
+<h5 id="C类">C类</h5>
+<p>最小网络号192, 最大网络号223.255.255<br>
+可指派的C类网络数量2 ^（24 - 3), 每个网络中可分配的IP地址数量为2 ^ 8 - 2</p>
+<h4 id="划分子网的IPv4地址">划分子网的IPv4地址</h4>
+<p>为了减少IP的浪费，把一个大的IP地址切分为多个小的子网</p>
+<p>结构变为&lt;网络号&gt;&lt;子网号&gt;&lt;主机号&gt;<br>
+<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/%E6%88%AA%E5%9B%BE%202026-01-25%2015-11-52.webp" alt=""></p>
+<h4 id="无分类编址的IPv4地址">无分类编址的IPv4地址</h4>
+<p>即使有了划分子网，但是还不够彻底，仍然有巨大的浪费</p>
+<p>Classless Inter-Domain Routing (无分类域间路由)CIDR 使用斜线记法，可以在 IP 后面直接写 <code>/n</code>，表示前 <code>n</code> 位是网络前缀</p>
+<h5 id="路由聚合（构造超网）">路由聚合（构造超网）</h5>
+<p>将多个较小的子网和1并成一个较大的网络<br>
+网络前缀越长，路由越具体，如果路由器查表转发分组的时候发现有多条路由可以选择，则选择网络前缀最长的那个，这样的路由更具体</p>
+<h4 id="IPv4地址的应用规划">IPv4地址的应用规划</h4>
+<p>采用 VLSM (可变长子网掩码)，根据实际的主机数量，按需分配</p>
+<h4 id="IP数据报的发送和转发过程">IP数据报的发送和转发过程</h4>
+<p>主机A给B发送数据，先将自己的IP地址与子网掩码进行<code>与</code>运算，得出自己的网络号。然后将目标IP地址与子网掩码<code>与</code>运算，得到目标地址的网络号，如果相同，说明在同一个子网内，主机A直接发送给B。如果不同，说明不在同一个子网内，主机A将数据发送给默认网关（通常是路由器），路由器拿着目的IP地址与自己路由表里的条目逐条匹配，如果找到，就将数据发送</p>
+<p>匹配算法</p>
+<ul>
+<li>
+<p>用路由表中每一行的<strong>掩码</strong>与<strong>目标 IP (D)</strong> 做 AND 运算。</p>
+</li>
+<li>
+<p>如果结果等于该行的<strong>目的网络地址</strong>，则匹配成功。</p>
+</li>
+<li>
+<p>如果有多行匹配成功，选择<strong>掩码最长</strong>（最精确）的那一行。</p>
+</li>
+<li>
+<p>如果没有一行匹配，丢弃数据报，向源主机报错（ICMP 目的不可达）</p>
+</li>
+</ul>
+<h4 id="静态路由配置及其可能产生的路由环路问题">静态路由配置及其可能产生的路由环路问题</h4>
+<ol>
+<li>互指的错误<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/%E6%88%AA%E5%9B%BE%202026-01-27%2016-08-46.webp" alt=""></li>
+<li>路由汇总 + 错误聚合 <img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/%E6%88%AA%E5%9B%BE%202026-01-27%2016-21-36.webp" alt=""><br>
+针对情况2,使用黑洞路由解决。<br>
+如果路由器查表的时候有多条能够匹配，使用最精确的那一条</li>
+</ol>
+<ul>
+<li>
+<p><strong>正常流量 (如 192.168.1.1)：</strong></p>
+<ul>
+<li>
+<p>路由器上有具体的明细路由（比如是通过动态路由学到的，或者是直连的）。</p>
+</li>
+<li>
+<p>明细路由 <code>/24</code> 比 Null0 的汇总路由 <code>/16</code> 更长。</p>
+</li>
+<li>
+<p><strong>结果：</strong> 正常转发，不会被丢弃。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>异常流量 (如 192.168.3.1)：</strong></p>
+<ul>
+<li>
+<p>路由器上没有 <code>.3.0</code> 的明细路由。</p>
+</li>
+<li>
+<p>此时，它匹配到了我们刚写的 <code>192.168.0.0/16 -&gt; Null0</code>。</p>
+</li>
+<li>
+<p>虽然可能还有默认路由指向外网，但 <code>/16</code> 比 <code>/0</code> (默认路由) 长。</p>
+</li>
+<li>
+<p><strong>结果：</strong> 路由器直接把包扔进垃圾桶 (Null0)。<strong>环路被切断了！</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="路由选择协议">路由选择协议</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/%E6%88%AA%E5%9B%BE%202026-01-27%2016-29-19.webp" alt=""><br>
+<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260127163236985.webp" alt="image.png"></p>
+<h4 id="RIP的基本工作原理">RIP的基本工作原理</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260128071526869.webp" alt="image.png"></p>
+<h5 id="更新过程">更新过程</h5>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260129072049415.webp" alt="image.png"></p>
+<ol>
+<li>路由器B收到了路由器A的路由表</li>
+<li>改造信息： B收到了A的路由表后， 把所有的举例都加1, 下一跳都改为A（B是A的相邻表，距离加1跳）<br>
+更新原则：
+<ul>
+<li><strong>新路线</strong>： A知道网络X怎么去，距离是x， B不知道， 直接添加</li>
+<li><strong>更短路线</strong>： A到网络Y要2跳，B到Y原本走C要5跳，更新，以后到Y走A</li>
+<li><strong>同源更新</strong>： A到网络Z需要10, B原本就是走A到Z的只需要3跳， 更新</li>
+<li><strong>更差的路线</strong>： 不管</li>
+</ul>
+</li>
+</ol>
+<h5 id="RIP的缺点：坏消息传的慢（慢收敛）">RIP的缺点：坏消息传的慢（慢收敛）</h5>
+<ol>
+<li>
+<p>路由器 A 连着网络 N，A 告诉 B：“去 N 只要 1 跳”。</p>
+</li>
+<li>
+<p>B 告诉 C：“去 N 只要 2 跳”。</p>
+</li>
+<li>
+<p>突然，<strong>A 和 N 断了</strong>。A 将去 N 的距离改为 16（不可达）。</p>
+</li>
+<li>
+<p>但在 A 的更新包发给 B 之前，B 抢先给了 A 一个更新：“嘿，去 N 走我这里只要 2 跳哦！”（这是 B 之前从 A 那里听来的旧闻）。</p>
+</li>
+<li>
+<p>A 傻了：“哦？你能去 N？那我把数据给你，距离变成 3。”</p>
+</li>
+<li>
+<p>A 和 B 开始互相欺骗，距离从 3 涨到 4，4 涨到 5… 直到涨到 16。</p>
+</li>
+<li>
+<p>这就是 <strong>“计数到无穷” (Count-to-Infinity)</strong> 问题，形成了路由环路。<br>
+<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260129102724434.webp" alt="image.png"></p>
+</li>
+</ol>
+<h4 id="OSPF的基本工作原理">OSPF的基本工作原理</h4>
+<ul>
+<li>OSPF是基于链路状态的，而不是像RIP一样基于距离向量</li>
+<li>采用Dijkstra提出的最短路径算法SPF计算路由， 从算法上保证了不会产生路由环路</li>
+<li>不限制网络规模， 更新效率高，收敛速度块</li>
+<li>链路状态是指本路由器和哪些路由器相邻以及相映链路的“代价“</li>
+</ul>
+<h5 id="工作流程">工作流程</h5>
+<ol>
+<li>建立邻居关系<br>
+相邻路由器通过交互问候（hello)分组， 建立和维护邻居关系
+<ul>
+<li>
+<p><strong>动作：</strong> 只要两个路由器互相收到了对方的 Hello 包，它们就建立了<strong>邻居关系 (Neighbor Relationship)</strong>。</p>
+</li>
+<li>
+<p><strong>目的：</strong> 确认链路是通的，并确立“我们俩要开始交换信息了”。</p>
+</li>
+<li>
+<p><strong>维持：</strong> 之后也会周期性发送 Hello 包（通常 10秒一次）作为“心跳”，如果 40秒（Dead Time）没收到邻居的 Hello，就认为邻居挂了。</p>
+</li>
+</ul>
+</li>
+<li>链路状态洪泛<br>
+使用OSPF的路由器会产生链路状态通告（LSA)， LSA中包含直连网络的状态信息， 相邻路由器的链路状态信息，与相邻路由器间的”代价“
+<ul>
+<li>
+<p><strong>泛洪 (Flooding)：</strong> 每个路由器都会把自己的 LSA 发给邻居，邻居收到后，<strong>原封不动</strong>地拷贝一份发给它的邻居。</p>
+</li>
+<li>
+<p><em>结果：</em> 就像连锁反应一样，最终全网所有的路由器都收到了<strong>每一台</strong>路由器的 LSA。</p>
+</li>
+</ul>
+</li>
+<li>构建链路状态数据库（LSDB)<br>
+将收集到的LSA存到数据库中</li>
+<li>计算最短路径<br>
+有了LSDB，路由器开始运行 <strong>Dijkstra 算法</strong>，构建出到达其他各路由的最短路径， 即构建路由表</li>
+</ol>
+<h5 id="区域">区域</h5>
+<p>如果网络特别大， LSDB会变得巨大， 为了使SPF可以用于大规模的网络，OSPF把一个自治系统划分为若干小范围的系统，叫做区域<br>
+<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260129105832875.webp" alt="image.png"></p>
+<h4 id="边界网关协议BGP">边界网关协议BGP</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260129110828473.webp" alt="image.png"><br>
+BGP 是目前互联网上<strong>唯一</strong>使用的 <strong>EGP (外部网关协议)</strong>。它的核心任务不是“找最快的路”，而是**“找一条能走、且符合策略（Policy）的路”**<br>
+<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260129125135371.webp" alt="image.png"></p>
+<h4 id="IPv4数据报的首部格式">IPv4数据报的首部格式</h4>
+<h4 id="网际控制报文协议ICMP">网际控制报文协议ICMP</h4>
+<ol>
+<li>终点不可达</li>
+<li>源点抑制<br>
+路由器或主机由于拥塞而丢弃数据时，向源点发送源点抑制报文，使源点知道应当把数据报的发送速率减缓</li>
+<li>时间超过</li>
+<li>参数问题</li>
+<li>改变路由（重定向）</li>
+</ol>
+<h5 id="以下情况不发送ICMP">以下情况不发送ICMP</h5>
+<ul>
+<li>对ICMP差错报告报文不发送ICMP差错报告报文</li>
+<li>对第一个分片的数据报片的所有后续数据报片不发送ICMP差错报告报文</li>
+<li>对具有多播地址的数据报都不发送ICMP差错报告报文</li>
+<li>对具有特殊地址（如127.0.0.1或0.0.0.0）的数据报不发送</li>
+</ul>
+<h5 id="常见的ICMP询问报文">常见的ICMP询问报文</h5>
+<ul>
+<li>回送请求和回答<br>
+由主机或路由器向一个特定的目的主机发出的询问，收到此报文的主机必须给源主机或路由器发送ICMP回送回答报文。<br>
+这种报文用于测试目的站是否可达</li>
+<li>时间戳请求和回答<br>
+请某个主机或路由器回答当前的日期和时间<br>
+进行时间同步和测量时间</li>
+</ul>
+<h5 id="ICMP应用">ICMP应用</h5>
+<ul>
+<li>ping</li>
+<li>traceroute</li>
+</ul>
+<h4 id="虚拟专用网VPN与网络地址转换NAT">虚拟专用网VPN与网络地址转换NAT</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260129190318836.webp" alt="image.png"></p>
+<h3 id="运输层">运输层</h3>
+<h4 id="UDP与TCP对比">UDP与TCP对比</h4>
+<p>UDP(user datagram protocal) tcp(transmission control protocal)<br>
+UDP</p>
+<ul>
+<li>无连接</li>
+<li>支持一对一， 一对多，多对多，多对一交互通信</li>
+<li>对应用层交付的报文直接打包</li>
+<li>尽最大努力交付，不可靠，不使用流量控制和拥塞控制</li>
+<li>首部开销小，只有8个字节<br>
+TCP</li>
+<li>面向连接</li>
+<li>只能一对一传输</li>
+<li>面向字节流</li>
+<li>可靠传输，使用流量控制拥塞控制</li>
+<li>首部最小20字节，最大60字节</li>
+</ul>
+<h4 id="TCP的流量控制">TCP的流量控制</h4>
+<p>如果发送方发送数据过快，接收方可能来不及接受，这回导致数据的丢失。<br>
+流量控制就是让发送方的速率不要太快，让接收方来的及接收<br>
+利用滑动窗口机制可以在TCP上实现对发送方的流量控制</p>
+<h5 id="滑动窗口">滑动窗口</h5>
+<ul>
+<li>接收方每次发送确认报文的时候，都会在窗口字段填入当前自己的缓冲区还有多少空间</li>
+<li>发送方收到ACK后，更新自己的发送窗口，保证已经发送但未收到确认的数据量&lt;=接收方的通知窗口大小</li>
+<li>接收方读取了缓冲区的数据，有更多的空间，会发送一个新的ACK告诉发送方，发送方的窗口向右滑动，继续发送</li>
+</ul>
+<h6 id="窗口关闭">窗口关闭</h6>
+<p>如果接收方缓冲区已经满了，会发送一个窗口为0的报文，此时发送方停止发送<br>
+但是这又有一个新的问题，<em>如果接收方处理了数据，有空余的空间，发送一个窗口增加的报文，但是这个报文在网络中丢失了，怎么办？</em> 这会导致死锁<br>
+解决方案：窗口关闭时，发送方启动一个定时器，周期性的向接收方发送一个字节数的探测报文，接收方收到后必须回复当前窗口的大小，这样就不会死锁</p>
+<h4 id="TCP的拥塞控制">TCP的拥塞控制</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260130215616083.webp" alt="image.png"></p>
+<p>拥塞控制是一个不断试探网络的过程，一旦发现丢包，就立即减少发送量，然后再慢慢增加</p>
+<p>关键变量：<strong><code>cwnd</code> (拥塞窗口)</strong> 和 <strong><code>ssthresh</code> (慢启动阈值)</strong></p>
+<p>cwnd: 发送方可以发送的数据量，不考虑接受方能不能接受<br>
+ssthresh：是慢启动与拥塞避免阶段的分界</p>
+<ol>
+<li>
+<p>慢启动<br>
+刚开始建立连接时，不知道网络状况什么样，从极小的大小开始试探<br>
+初始cwnd=1,发送数据，每收到一个ACK就+1<br>
+每次窗口都翻倍增长<br>
+当cwnd增长到&gt;=ssthresh时，慢启动结束，进入拥塞避免阶段</p>
+</li>
+<li>
+<p>拥塞避免<br>
+不再翻倍增长，而是每经过一个发送确认周期，cwnd大小只增加1<br>
+直到网络出现丢包结束</p>
+</li>
+<li>
+<p>拥塞发生</p>
+<ol>
+<li>严重拥塞<br>
+发送方迟迟收不到 ACK，直到定时器（RTO）超时。TCP 认为网络可能瘫痪了，反应非常剧烈。<br>
+ssthresh设置为当前cwnd的一半，然后将cwnd大小重置为1，重新进入慢启动阶段</li>
+<li>轻微拥塞<br>
+发送方收到了连续3个重复的ACK（这说明中间有包丢失了，但是后面的都收到了），TCP认为网络还行，不需要重置为1,进行快重传，快恢复
+<ul>
+<li>ssthresh设置为cwnd的一半</li>
+<li>将cwnd设置为ssthresh + 3(3是那三个重复的ACK)</li>
+<li>进入快恢复</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>快恢复</p>
+<ul>
+<li>
+<p>如果继续收到<strong>重复的 ACK</strong>，说明还有后续数据包到达了（都在网络里），<code>cwnd</code> 继续 <strong>+1</strong>。</p>
+</li>
+<li>
+<p>直到收到<strong>新的 ACK</strong>（确认了重传的数据包），说明丢包已经补上了。</p>
+</li>
+<li>
+<p><strong>退出快恢复</strong>：将 <code>cwnd</code> 设置为 <code>ssthresh</code>（即刚才减半后的值），然后<strong>进入拥塞避免</strong>阶段（线性增长）。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260131164803359.webp" alt="image.png"></p>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260131165106744.webp" alt="image.png"></p>
+<h4 id="TCP超时重传">TCP超时重传</h4>
+<p>TCP 超时重传时间 (<strong>RTO</strong>, Retransmission TimeOut)<br>
+RTT：数据包从发送到收到ACK的往返时间<br>
+如果RTO设置的时间太短，没有丢包也会认为丢包，产生不必要的重传，如果设置的时间太长，真发生丢包的时候，重传太慢，效率也很低</p>
+<p>TCP采用动态算法计算RTO，让RTO的时间略大与RTT</p>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260201130635137.webp" alt="image.png"></p>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260201130821907.webp" alt="image.png"></p>
+<h4 id="TCP的连接建立">TCP的连接建立</h4>
+<p>三次握手<br>
+<img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260202203943311.webp" alt="image.png"></p>
+<ul>
+<li>最初都处于close状态</li>
+<li>TCP服务器进程首先创建传输控制快，然后等待TCP客户端的连接请求，进入监听状态，</li>
+<li>客户端随机生成一个初始序列号 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>。发送报文。<strong>报文内容：</strong> <code>SYN=1</code>, <code>seq=x</code></li>
+<li>服务器收到请求，同意建立连接。它需要确认客户端的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span>，同时自己也生成一个初始序列号 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span>。<strong>报文内容：</strong> <code>SYN=1</code>, <code>ACK=1</code>, <code>seq=y</code>, <code>ack=x+1</code>。</li>
+<li>客户端收到服务器的同意。需要对服务器的 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> 进行确认。<strong>报文内容：</strong> <code>ACK=1</code>, <code>seq=x+1</code>, <code>ack=y+1</code>
+<ul>
+<li>客户端发送后，进入 <strong><code>ESTABLISHED</code> (已建立连接)</strong> 状态。</li>
+<li>服务器收到后，也进入 <strong><code>ESTABLISHED</code></strong> 状态<br>
+<strong>为什么必须是“三次”，两次行不行？</strong><br>
+防止“已失效的连接请求”突然到达</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>
+<p>客户端发了第一个请求（A），但在网络里滞留了</p>
+</li>
+<li>
+<p>客户端看 A 没回复，以为丢了，又发了一个请求（B）。</p>
+</li>
+<li>
+<p>B 顺利完成了连接、传输、断开。</p>
+</li>
+<li>
+<p><strong>过了一会儿，滞留的 A 终于到了服务器。</strong></p>
+</li>
+</ol>
+<ul>
+<li>
+<p><strong>如果是两次握手：</strong> 服务器收到 A，以为客户端又要建新连接，立刻回复“好的”，连接就建立了。服务器开始傻等客户端发数据，浪费资源。</p>
+</li>
+<li>
+<p><strong>如果是三次握手：</strong> 服务器收到 A，回复“好的”（第二次握手）。客户端收到后，发现：“咦？我没想建连接啊，这是旧消息。”于是客户端<strong>拒绝发送第三次确认</strong>。服务器收不到确认，就知道连接建立失败，释放资源。</p>
+</li>
+</ul>
+<p><strong>第三次握手是可以携带数据的，前两次握手是不可以携带数据的</strong></p>
+<h4 id="TCP连接关闭">TCP连接关闭</h4>
+<p><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260202210534344.webp" alt="image.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io">tangerineyu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io/2026/01/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">https://tangerineyu.github.io/2026/01/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://tangerineyu.github.io" target="_blank">EurekaYu</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%BD%91/">计网</a></div><div class="post-share"><div class="social-share" data-image="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-3q3z9d.webp" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/01/07/GMP/" title="GMP"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260124.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">GMP</div></div><div class="info-2"><div class="info-item-1">线程 内核态，操作系统的最小调度单元，创建销毁，调度都需要由内核来完成，可以充分利用多核，实现并行 协程  用户态，是线程的子集，在线程的基础上，对线程进行二次加工得到，从属于某一个线程，与线程存在映射关系比例是m :...</div></div></div></a><a class="pagination-related" href="/2026/01/30/%E5%89%8D%E7%BC%80%E6%A0%91/" title="前缀树"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-polllj.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">前缀树</div></div><div class="info-2"><div class="info-item-1">前缀树 力扣练习题 1234567891011121314151617181920212223242526272829303132333435363738394041type TrieNode struct &#123;      children [26]*TrieNode      isEnd    bool  //是否有以当前节点为结尾的单词&#125;  type Trie struct &#123;      root *TrieNode  &#125;    func Constructor() Trie &#123;      return Trie&#123;root: &amp;TrieNode&#123;&#125;&#125;  &#125;  func (t *Trie) Insert(word string) &#123;      move := t.root      for _, ch := range word &#123;         index := ch - &#x27;a&#x27;         if...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">tangerineyu</div><div class="author-info-description">爱非虚妄，梦不荒唐</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/tangerineyu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，如果有什么加载不出来Ctrl + F5 / 刷新页面也许能解决</div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="toc-number">1.</span> <span class="toc-text">网络层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%B1%BB%E7%BC%96%E5%9D%80%E7%9A%84IPv4%E5%9C%B0%E5%9D%80"><span class="toc-number">1.1.</span> <span class="toc-text">分类编址的IPv4地址</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#A%E7%B1%BB%E5%9C%B0%E5%9D%80"><span class="toc-number">1.1.1.</span> <span class="toc-text">A类地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#B%E7%B1%BB"><span class="toc-number">1.1.2.</span> <span class="toc-text">B类</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#C%E7%B1%BB"><span class="toc-number">1.1.3.</span> <span class="toc-text">C类</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%92%E5%88%86%E5%AD%90%E7%BD%91%E7%9A%84IPv4%E5%9C%B0%E5%9D%80"><span class="toc-number">1.2.</span> <span class="toc-text">划分子网的IPv4地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A0%E5%88%86%E7%B1%BB%E7%BC%96%E5%9D%80%E7%9A%84IPv4%E5%9C%B0%E5%9D%80"><span class="toc-number">1.3.</span> <span class="toc-text">无分类编址的IPv4地址</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E8%81%9A%E5%90%88%EF%BC%88%E6%9E%84%E9%80%A0%E8%B6%85%E7%BD%91%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">路由聚合（构造超网）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IPv4%E5%9C%B0%E5%9D%80%E7%9A%84%E5%BA%94%E7%94%A8%E8%A7%84%E5%88%92"><span class="toc-number">1.4.</span> <span class="toc-text">IPv4地址的应用规划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%9A%84%E5%8F%91%E9%80%81%E5%92%8C%E8%BD%AC%E5%8F%91%E8%BF%87%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">IP数据报的发送和转发过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E8%B7%AF%E7%94%B1%E9%85%8D%E7%BD%AE%E5%8F%8A%E5%85%B6%E5%8F%AF%E8%83%BD%E4%BA%A7%E7%94%9F%E7%9A%84%E8%B7%AF%E7%94%B1%E7%8E%AF%E8%B7%AF%E9%97%AE%E9%A2%98"><span class="toc-number">1.6.</span> <span class="toc-text">静态路由配置及其可能产生的路由环路问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.7.</span> <span class="toc-text">路由选择协议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RIP%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.8.</span> <span class="toc-text">RIP的基本工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B"><span class="toc-number">1.8.1.</span> <span class="toc-text">更新过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#RIP%E7%9A%84%E7%BC%BA%E7%82%B9%EF%BC%9A%E5%9D%8F%E6%B6%88%E6%81%AF%E4%BC%A0%E7%9A%84%E6%85%A2%EF%BC%88%E6%85%A2%E6%94%B6%E6%95%9B%EF%BC%89"><span class="toc-number">1.8.2.</span> <span class="toc-text">RIP的缺点：坏消息传的慢（慢收敛）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OSPF%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">1.9.</span> <span class="toc-text">OSPF的基本工作原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.9.1.</span> <span class="toc-text">工作流程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8C%BA%E5%9F%9F"><span class="toc-number">1.9.2.</span> <span class="toc-text">区域</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%B9%E7%95%8C%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AEBGP"><span class="toc-number">1.10.</span> <span class="toc-text">边界网关协议BGP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IPv4%E6%95%B0%E6%8D%AE%E6%8A%A5%E7%9A%84%E9%A6%96%E9%83%A8%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.11.</span> <span class="toc-text">IPv4数据报的首部格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E9%99%85%E6%8E%A7%E5%88%B6%E6%8A%A5%E6%96%87%E5%8D%8F%E8%AE%AEICMP"><span class="toc-number">1.12.</span> <span class="toc-text">网际控制报文协议ICMP</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%A5%E4%B8%8B%E6%83%85%E5%86%B5%E4%B8%8D%E5%8F%91%E9%80%81ICMP"><span class="toc-number">1.12.1.</span> <span class="toc-text">以下情况不发送ICMP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84ICMP%E8%AF%A2%E9%97%AE%E6%8A%A5%E6%96%87"><span class="toc-number">1.12.2.</span> <span class="toc-text">常见的ICMP询问报文</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ICMP%E5%BA%94%E7%94%A8"><span class="toc-number">1.12.3.</span> <span class="toc-text">ICMP应用</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E4%B8%93%E7%94%A8%E7%BD%91VPN%E4%B8%8E%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2NAT"><span class="toc-number">1.13.</span> <span class="toc-text">虚拟专用网VPN与网络地址转换NAT</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%BE%93%E5%B1%82"><span class="toc-number">2.</span> <span class="toc-text">运输层</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UDP%E4%B8%8ETCP%E5%AF%B9%E6%AF%94"><span class="toc-number">2.1.</span> <span class="toc-text">UDP与TCP对比</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E7%9A%84%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">TCP的流量控制</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3"><span class="toc-number">2.2.1.</span> <span class="toc-text">滑动窗口</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E7%AA%97%E5%8F%A3%E5%85%B3%E9%97%AD"><span class="toc-number">2.2.1.1.</span> <span class="toc-text">窗口关闭</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E7%9A%84%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text">TCP的拥塞控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E8%B6%85%E6%97%B6%E9%87%8D%E4%BC%A0"><span class="toc-number">2.4.</span> <span class="toc-text">TCP超时重传</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E7%9A%84%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B"><span class="toc-number">2.5.</span> <span class="toc-text">TCP的连接建立</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP%E8%BF%9E%E6%8E%A5%E5%85%B3%E9%97%AD"><span class="toc-number">2.6.</span> <span class="toc-text">TCP连接关闭</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/02/01/Mysql/" title="Mysql"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/104114-1759372874887f.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql"/></a><div class="content"><a class="title" href="/2026/02/01/Mysql/" title="Mysql">Mysql</a><time datetime="2026-02-01T16:00:00.000Z" title="发表于 2026-02-02 00:00:00">2026-02-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/31/zap%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/" title="zap的使用"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="zap的使用"/></a><div class="content"><a class="title" href="/2026/01/31/zap%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8/" title="zap的使用">zap的使用</a><time datetime="2026-01-31T16:00:00.000Z" title="发表于 2026-02-01 00:00:00">2026-02-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/30/%E5%89%8D%E7%BC%80%E6%A0%91/" title="前缀树"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-polllj.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前缀树"/></a><div class="content"><a class="title" href="/2026/01/30/%E5%89%8D%E7%BC%80%E6%A0%91/" title="前缀树">前缀树</a><time datetime="2026-01-30T16:00:00.000Z" title="发表于 2026-01-31 00:00:00">2026-01-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" title="计算机网络-网络层"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/wallhaven-3q3z9d.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机网络-网络层"/></a><div class="content"><a class="title" href="/2026/01/23/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" title="计算机网络-网络层">计算机网络-网络层</a><time datetime="2026-01-23T16:00:00.000Z" title="发表于 2026-01-24 00:00:00">2026-01-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/07/GMP/" title="GMP"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/20260124.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="GMP"/></a><div class="content"><a class="title" href="/2026/01/07/GMP/" title="GMP">GMP</a><time datetime="2026-01-07T16:00:00.000Z" title="发表于 2026-01-08 00:00:00">2026-01-08</time></div></div></div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script></div></div></main><footer id="footer" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2026 By tangerineyu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.isShuoshuo
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
