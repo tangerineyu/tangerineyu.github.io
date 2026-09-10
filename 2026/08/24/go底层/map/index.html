@@ -1,0 +1,465 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>map底层原理 | EurekaYu</title><meta name="author" content="tangerineyu"><meta name="copyright" content="tangerineyu"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="1.24以前使用的是hmap, 在1.24及之后使用的是swisstable 先看一下老版本的hmap hmap 12345678910111213type hmap struct &#123;    count     int    flags     uint8    B         uint8    noverflow uint16    hash0     uint32    buck">
+<meta property="og:type" content="article">
+<meta property="og:title" content="map底层原理">
+<meta property="og:url" content="https://tangerineyu.github.io/2026/08/24/go%E5%BA%95%E5%B1%82/map/index.html">
+<meta property="og:site_name" content="EurekaYu">
+<meta property="og:description" content="1.24以前使用的是hmap, 在1.24及之后使用的是swisstable 先看一下老版本的hmap hmap 12345678910111213type hmap struct &#123;    count     int    flags     uint8    B         uint8    noverflow uint16    hash0     uint32    buck">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg">
+<meta property="article:published_time" content="2026-08-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-10T01:44:24.378Z">
+<meta property="article:author" content="tangerineyu">
+<meta property="article:tag" content="go底层">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg"><link rel="shortcut icon" href="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/1.jpg"><link rel="canonical" href="https://tangerineyu.github.io/2026/08/24/go%E5%BA%95%E5%B1%82/map/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'map底层原理',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  isShuoshuo: false
+}</script><link rel="stylesheet" href="/css/my.css"><link rel="stylesheet" href="/css/fonts.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/mainColor/heoMainColor.css"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/poem.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><div class="loading-img" style="background-image:url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg);background-repeat: no-repeat;background-position:center;"></div><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = 'hidden';
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+preloader.initLoading()
+window.addEventListener('load',()=> { preloader.endLoading() })
+
+if (false) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="/css/icat_change.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js/pace.min.js"></script><div id="web_bg" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">EurekaYu</span></a><a class="nav-page-title" href="/"><span class="site-name">map底层原理</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-book"></i><span> 文章</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></li><li><a class="site-page child" href="/todo/"><i class="fa-fw fas fa-list-alt"></i><span> ToDo</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/contact/"><i class="fa-fw fas fa-comments"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">map底层原理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-24T16:00:00.000Z" title="发表于 2026-08-25 00:00:00">2026-08-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-10T01:44:24.378Z" title="更新于 2026-09-10 09:44:24">2026-09-10</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="twikoo_visitors"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>1.24以前使用的是hmap, 在1.24及之后使用的是swisstable<br>
+先看一下老版本的hmap</p>
+<h4 id="hmap">hmap</h4>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> hmap <span class="keyword">struct</span> &#123;</span><br><span class="line">    count     <span class="type">int</span></span><br><span class="line">    flags     <span class="type">uint8</span></span><br><span class="line">    B         <span class="type">uint8</span></span><br><span class="line">    noverflow <span class="type">uint16</span></span><br><span class="line">    hash0     <span class="type">uint32</span></span><br><span class="line"></span><br><span class="line">    buckets    unsafe.Pointer</span><br><span class="line">    oldbuckets unsafe.Pointer</span><br><span class="line">    nevacuate  <span class="type">uintptr</span></span><br><span class="line"></span><br><span class="line">    extra *mapextra</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以理解成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">map 变量</span><br><span class="line">   |</span><br><span class="line">   v</span><br><span class="line"> hmap</span><br><span class="line">   |</span><br><span class="line">   +--&gt; buckets ------&gt; 当前 bucket 数组</span><br><span class="line">   |</span><br><span class="line">   +--&gt; oldbuckets ---&gt; 扩容前的 bucket 数组</span><br><span class="line">   |</span><br><span class="line">   +--&gt; count          元素数量</span><br><span class="line">   |</span><br><span class="line">   +--&gt; B              bucket 数量指数</span><br><span class="line">   |</span><br><span class="line">   +--&gt; hash0          hash 随机种子</span><br><span class="line">   |</span><br><span class="line">   +--&gt; nevacuate      扩容迁移进度</span><br></pre></td></tr></table></figure>
+<p>B代表的不是bucket的数量, 而是bucket指数, bucket = 2 ^ B</p>
+<h5 id="bmap">bmap</h5>
+<p>buckets 指向 bucket数组, 每一个bucket的类型是bmap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">hmap</span><br><span class="line"> |</span><br><span class="line"> | buckets</span><br><span class="line"> v</span><br><span class="line">+---------+</span><br><span class="line">| bucket0 |</span><br><span class="line">+---------+</span><br><span class="line">| bucket1 |</span><br><span class="line">+---------+</span><br><span class="line">| bucket2 |</span><br><span class="line">+---------+</span><br><span class="line">| bucket3 |</span><br><span class="line">+---------+</span><br></pre></td></tr></table></figure>
+<p>bmap里面实际的布局是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">+-------------------------+</span><br><span class="line">| tophash0                |</span><br><span class="line">| tophash1                |</span><br><span class="line">| ...                     |</span><br><span class="line">| tophash7                |</span><br><span class="line">+-------------------------+</span><br><span class="line"></span><br><span class="line">| key0 |</span><br><span class="line">| key1 |</span><br><span class="line">| key2 |</span><br><span class="line">| ...  |</span><br><span class="line">| key7 |</span><br><span class="line"></span><br><span class="line">| val0 |</span><br><span class="line">| val1 |</span><br><span class="line">| val2 |</span><br><span class="line">| ...  |</span><br><span class="line">| val7 |</span><br><span class="line"></span><br><span class="line">+-------------------------+</span><br><span class="line">| overflow *bmap          |</span><br><span class="line">+-------------------------+</span><br></pre></td></tr></table></figure>
+<p>这里看起来比较奇怪, 为什么key放在一起, value放在一起</p>
+<p>先看如果在一起</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Entry <span class="keyword">struct</span> &#123;</span><br><span class="line">    key   <span class="type">int64</span> <span class="comment">// 8 字节</span></span><br><span class="line">    value <span class="type">int8</span>  <span class="comment">// 1 字节</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看起来可能是占用9个字节, 但是CPU存在对数据的 内存对齐 要求, int64在内存中的理想起始位置是以8为分界的, 这个value占用了1, 但是下一个key的分布还是要以8为单位的, 实际上这个结构体要占用16个字节, 有7个字节是填充的, 如果像这样放在一起, 空间就存在较大的浪费, 所以就把key, value分开放, 可以减少填充</p>
+<h5 id="tophash">tophash</h5>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">m[<span class="string">&quot;hello&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>首先会计算hash(“hello”), 得到一个64位的hash</p>
+<p>这64位会分为两部分</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">低位 hash</span><br><span class="line">   |</span><br><span class="line">   v</span><br><span class="line">决定 bucket</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">高 8 位 hash</span><br><span class="line">   |</span><br><span class="line">   v</span><br><span class="line">tophash</span><br><span class="line"></span><br><span class="line">例如</span><br><span class="line">hash(key) =</span><br><span class="line">10110110 ................ 0011</span><br><span class="line">^^^^^^^^                   ^^^^</span><br><span class="line">tophash                    bucket</span><br></pre></td></tr></table></figure>
+<p>假设B = 3, bucket 数量 = 8, 就需要hash的低3位bit, 011, 那么就进入bucket3</p>
+<p>那tophash呢, 都到bucket了, 还要tophash干什么</p>
+<p>进入一个bucket里面了, 要比较key和已经有的key是否相等, 最直接最笨的方法就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">key == keyA?</span><br><span class="line">key == keyB?</span><br><span class="line">key == keyC?</span><br><span class="line">key == keyD?</span><br></pre></td></tr></table></figure>
+<p>直接进行字符串比较比较贵, 所以go先比较一个便宜的东西, tophash</p>
+<p>只有tophash匹配了, 才去进行真正的 == 比较</p>
+<h5 id="hash0">hash0</h5>
+<p>每个map上都随机hash seed, 作用就是降低碰撞风险</p>
+<h5 id="overflow-bucket">overflow bucket</h5>
+<p>一个bucket正常里面只有8个slot, 如果大量的key都到这个bucket里面<br>
+满了怎么处理?</p>
+<p>分配overflow bucket, 执行别的bucket, 有点像数组➕链表, 一个bucket链</p>
+<h5 id="noverflow">noverflow</h5>
+<p>overflow bucket 大致数量, 为什么说“大致”？</p>
+<p>因为在大 map 中，runtime 不一定精确计数，它主要用于判断：overflow bucket 是否太多了？</p>
+<h5 id="oldbuckets">oldbuckets</h5>
+<p>原本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hmap</span><br><span class="line"> |</span><br><span class="line"> +-- buckets ---&gt; 当前 bucket</span><br><span class="line"> |</span><br><span class="line"> +-- oldbuckets = nil</span><br></pre></td></tr></table></figure>
+<p>如果触发扩容, 创建新的buckets</p>
+<p>但是不是立刻全部copy, 而是新旧两套暂时共存, 渐进式搬迁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">hmap</span><br><span class="line"></span><br><span class="line">buckets -&gt; [new buckets]</span><br><span class="line"></span><br><span class="line">oldbuckets -&gt;[old buckets]</span><br></pre></td></tr></table></figure>
+<h5 id="nevacuate">nevacuate</h5>
+<p>记录旧的bucket搬迁到哪了<br>
+比如旧的有 0, 1, 2,3, 4, 5, 6, 7<br>
+nevacuate = 3, 那就表示已经搬迁了0, 1, 2, bucket3下一批处理</p>
+<p>搬迁也不是把旧bucket直接放在新bucket的对应位置, 而是根据新bucket的数量, 重新分位置</p>
+<h5 id="QA">QA</h5>
+<blockquote>
+<p>为什么不是一次性搬</p>
+</blockquote>
+<p>因为如果map比较大, 可能会非常耗时</p>
+<blockquote>
+<p>扩容触发条件</p>
+</blockquote>
+<p>hmap实现里面有两个触发条件</p>
+<ol>
+<li>
+<p>负载因子太高, 阈值是6.5<br>
+因为每个bucket里面有8个slot, 如果平均达到了6.5, 说明碰撞概率明显上升, 于是进行2倍扩容</p>
+</li>
+<li>
+<p>overflow太多<br>
+总数量没有很多, 但是因为频繁的插入/删除某个元素, 或者是hash分布问题, 导致出现大量overflow, 这是就会触发 same-size grow,<br>
+bucket数量不变, 但是重新整理</p>
+</li>
+</ol>
+<blockquote>
+<p>为什么map元素不能取地址</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">m := <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>&#123;</span><br><span class="line">    <span class="string">&quot;a&quot;</span>: <span class="number">10</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">p := &amp;m[<span class="string">&quot;a&quot;</span>] <span class="comment">//会编译失败</span></span><br></pre></td></tr></table></figure>
+<p>因为扩容时, 原来可能是old bucket 2 slot4, 但是新的可能是new bucket 5 slot1<br>
+地址出现变化, 如果取地址, 然后发生扩容后, 值就不是代表原来的元素了, 所以go直接禁止了这种做法</p>
+<h4 id="swisstable">swisstable</h4>
+<h5 id="整体结构">整体结构</h5>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">                  Go Map</span><br><span class="line">                    │</span><br><span class="line">         ┌──────────▼───────────┐</span><br><span class="line">         │      Directory       │</span><br><span class="line">         └──────────┬───────────┘</span><br><span class="line">                    │</span><br><span class="line">         hash 高位选择 Table</span><br><span class="line">     ┌──────────────┼──────────────┐</span><br><span class="line">     │              │              │</span><br><span class="line">     ▼              ▼              ▼</span><br><span class="line"> Table 0        Table 1        Table 2</span><br><span class="line">SwissTable     SwissTable     SwissTable</span><br><span class="line">   │               │              │</span><br><span class="line">Groups           Groups          Groups</span><br></pre></td></tr></table></figure>
+<p>整体分成了三层, 分别是Directory, table. group, 一个键进入map后计算出hash<br>
+通过高位前缀选择出table, 然后在table中, h分成高57位的h1和低7位h2, h1用来生成开放寻址的探测序列, h2用来匹配slot</p>
+<h5 id="核心源码">核心源码</h5>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Map <span class="keyword">struct</span> &#123;</span><br><span class="line">    used <span class="type">uint64</span></span><br><span class="line">    seed <span class="type">uintptr</span></span><br><span class="line"></span><br><span class="line">    dirPtr unsafe.Pointer</span><br><span class="line">    dirLen <span class="type">int</span></span><br><span class="line"></span><br><span class="line">    globalDepth <span class="type">uint8</span></span><br><span class="line">    globalShift <span class="type">uint8</span></span><br><span class="line"></span><br><span class="line">    writing <span class="type">uint8</span></span><br><span class="line"></span><br><span class="line">    tombstonePossible <span class="type">bool</span></span><br><span class="line"></span><br><span class="line">    clearSeq <span class="type">uint64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>hmap的时候, 一个bucket放8个k, v, 发生冲突的时候, bucket -&gt; overflow bucket -&gt; overflowbucket 这样指针跳来跳去导致chache miss比较多(有点像1.26的GC优化, 也是优化了cache miss), 而swisstable 使用了开放寻址</p>
+<h5 id="group">group</h5>
+<p>swisstable的核心数据结构, 也是最基本的存储单位, 一个group有8个slot, 每个slot = key + value</p>
+<p>Group = 8 slots + 8-byte control word</p>
+<p>控制区ctrl一共8byte, 每个byte对应一个slot</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">             一个 Group</span><br><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│ control bytes                       │</span><br><span class="line">│                                     │</span><br><span class="line">│ c0 c1 c2 c3 c4 c5 c6 c7             │</span><br><span class="line">├─────────────────────────────────────┤</span><br><span class="line">│ slot0 slot1 slot2 ... slot7         │</span><br><span class="line">│                                     │</span><br><span class="line">│ K V   K V   K V       K V           │</span><br><span class="line">└─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+<p>这上面的c1, c2, c3 …, 他们能让swisstable能一次筛选8个slot</p>
+<h5 id="hash">hash</h5>
+<p>hash被拆成H1, H2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hash</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                    64 bits                                  │</span><br><span class="line">├──────────────────────────────────────────────┬──────────────┤</span><br><span class="line">│                    H1                        │      H2      │</span><br><span class="line">│                  57 bits                     │     7 bits   │</span><br><span class="line">└──────────────────────────────────────────────┴──────────────┘</span><br></pre></td></tr></table></figure>
+<p>H1是导航, 到哪找, H2是指纹, 怎么比较</p>
+<p>普通hash表可能要每个slot hash和H2进行比较,但是swisstable可以一次比较得到H2符合的slot, 怎么做的呢</p>
+<blockquote>
+<p>并行匹配的实现</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">bitsetLSB = <span class="number">01</span> <span class="number">01</span> <span class="number">01</span> <span class="number">01</span> <span class="number">01</span> <span class="number">01</span> <span class="number">01</span> <span class="number">01</span></span><br><span class="line">bitsetMSB = <span class="number">80</span> <span class="number">80</span> <span class="number">80</span> <span class="number">80</span> <span class="number">80</span> <span class="number">80</span> <span class="number">80</span> <span class="number">80</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g ctrlGroup)</span></span> matchH2(h <span class="type">uintptr</span>) bitset &#123;</span><br><span class="line">	<span class="keyword">return</span> ctrlGroupMatchH2(g, h)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ctrlGroupMatchH2</span><span class="params">(g ctrlGroup, h <span class="type">uintptr</span>)</span></span> bitset &#123;</span><br><span class="line">	v := <span class="type">uint64</span>(g) ^ (bitsetLSB * <span class="type">uint64</span>(h))</span><br><span class="line">	<span class="keyword">return</span> bitset(((v - bitsetLSB) &amp;^ v) &amp; bitsetMSB)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>bitsetLSB * uint64(h):把1-byte的h2复制成hhhhhhhh, 也就是复制八粉<br>
+uint64(g) ^ (bitsetLSB * uint64(h)): 异或让相等的字节变成0x00</p>
+<p>(v - bitsetLSB) &amp;^ v) &amp; bitsetMSB) = ((v-0x0101010101010101) &amp; ^v) &amp; 0x8080808080808080</p>
+<p>这个64-bit数字里哪些byte等于0, 哪些ctrl就等于H2</p>
+<p>这是一个先把 8 个 slot 对应的 8 个 control byte 一次性装进一个 <code>uint64</code>，然后用位运算或 SIMD 一次判断“哪些 byte 等于 H2”的过程。</p>
+<h5 id="control-word">control word</h5>
+<p>一个 ctrl 是8bit</p>
+<p>大致有三种状态：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">empty</span><br><span class="line">deleted</span><br><span class="line">full + H2</span><br></pre></td></tr></table></figure>
+<p>当前源码定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ctrlEmpty   = 0b10000000</span><br><span class="line">ctrlDeleted = 0b11111110</span><br></pre></td></tr></table></figure>
+<p>如果 slot 已被使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0hhhhhhh</span><br></pre></td></tr></table></figure>
+<p>后面的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hhhhhhh</span><br></pre></td></tr></table></figure>
+<p>就是 7-bit H2。</p>
+<p>所以可以想成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">full:</span><br><span class="line">0 x x x x x x x</span><br><span class="line">  └──── H2 ────┘</span><br><span class="line"></span><br><span class="line">empty:</span><br><span class="line">1 0 0 0 0 0 0 0</span><br><span class="line"></span><br><span class="line">deleted:</span><br><span class="line">1 1 1 1 1 1 1 0</span><br></pre></td></tr></table></figure>
+<p>为什么 full 最高位是 0？</p>
+<p>因为这样可以非常容易批量判断：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">哪些是 full</span><br><span class="line">哪些是 empty/deleted</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当前group找不到怎么办</p>
+</blockquote>
+<p>会去下一个group找</p>
+<blockquote>
+<p>为什么设计了一个empty状态</p>
+</blockquote>
+<p>假设probe: group3 -&gt; 没有key -&gt; group4 -&gt; 没有key, 但是有empty<br>
+就可以立刻终止: key不存在</p>
+<p>因为如果这个key插入过, 在probe的过程中, 就肯定不会跨国一个没有使用的empty slot</p>
+<blockquote>
+<p>为什么有deleted / tombstone</p>
+</blockquote>
+<p>A hash 到 group3<br>
+B 也 hash 到 group3</p>
+<p>但 A 占位，所以 B 最终被放到后面</p>
+<p>现在delete(m, A), A的位置变成empty, 那查B的时候看到empty就会直接终止, 永远找不到group4里面的B, 所以需要标记deleted</p>
+<h5 id="Directory">Directory</h5>
+<p>为什么还需要快成而Directory, 而不是直接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Map</span><br><span class="line"> |</span><br><span class="line"> v</span><br><span class="line">Swiss Table</span><br><span class="line"> |</span><br><span class="line"> +--&gt; Group</span><br><span class="line"> +--&gt; Group</span><br><span class="line"> +--&gt; Group</span><br><span class="line"> +--&gt; Group</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+<p>因为如果一个map非常巨大, 那发生扩容的时候, 代价也会非常大</p>
+<p>Go 当前源码里：const maxTableCapacity = 1024, 一个 Swiss Table最多管理 1024 个 slot, 超过以后不是把整个 map 翻倍</p>
+<p>而是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">只 split 当前这个 table</span><br></pre></td></tr></table></figure>
+<p>官方 Go Blog 也专门解释了这一点：这样单次插入触发扩容时，需要搬迁的数据量被限制在一个 table 的量级，而不是整个 map。<a target="_blank" rel="noopener" href="https://go.dev/src/internal/runtime/maps/table.gohttps://go.dev/src/internal/runtime/maps/table.go">Go程序设计语言</a><br>
+例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Directory</span><br><span class="line"></span><br><span class="line">00 ──────&gt; Table A</span><br><span class="line">01 ──────&gt; Table B</span><br><span class="line">10 ──────&gt; Table C</span><br><span class="line">11 ──────&gt; Table D</span><br></pre></td></tr></table></figure>
+<p>假设：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Table C 满了</span><br></pre></td></tr></table></figure>
+<p>只做：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Table C</span><br><span class="line"></span><br><span class="line">        split</span><br><span class="line">       /     \</span><br><span class="line">      v       v</span><br><span class="line">   Table C0 Table C1</span><br></pre></td></tr></table></figure>
+<p>其它：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A B D</span><br></pre></td></tr></table></figure>
+<p>完全不动。</p>
+<blockquote>
+<p>Directory怎么选择table</p>
+</blockquote>
+<p>这里会使用hash的高位, 假设globalDepth = 2, 那么hash最前面2bit就决定是哪个</p>
+<h5 id="globalDepth和localDepth">globalDepth和localDepth</h5>
+<p>globalDepth表示Dorectory使用多少位bit<br>
+localDepth表示这个table根据多少位hash分裂过</p>
+<p>这里会出现一种情况, 多个directory entry指向同一个Table</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">globalDepth = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="number">00</span> ──┐</span><br><span class="line">     ├──&gt; Table A (localDepth=<span class="number">1</span>)</span><br><span class="line"><span class="number">01</span> ──┘</span><br><span class="line"></span><br><span class="line"><span class="number">10</span> ─────&gt; Table B (localDepth=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="number">11</span> ─────&gt; Table C (localDepth=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>因为A只分裂到1, 所以它不关心第二位, 00, 01都指向A</p>
+<h5 id="扩容">扩容</h5>
+<ol>
+<li>
+<p>Table grow<br>
+容量小于1024的时候, 并且插入元素 / 容量 = 7/8, 也就是达到负载因子, 就进行翻倍扩容, 128-&gt;256-&gt;512-&gt;1024, table大小不超过1024, 所以容量达到1024的table在进行扩容就使用方法2</p>
+<p>旧table插入新table, 元素位置要重新计算, 这里与hmap不同, 不是渐进式的搬迁, 因为table比较小,所以是一次完成, 旧table被回收</p>
+</li>
+<li>
+<p>split<br>
+达到1024后不能进行grow, 使用拆分<br>
+原来Table A, localDepth = 2, 因为它只区分了前两位hash, 现在满了, 那就增加一位<br>
+例如 <code>hash = 101011...</code><br>
+前两位10, 进入tableA, split后再看第三位, 1进入A1, 0进入A0</p>
+<blockquote>
+<p>split时, Directory不一定增加(参见上面globalDepth, localDepth的图)</p>
+</blockquote>
+<p>原来globalDepth = 2, localDepth = 1, split后, localDepth = 2, 本来Directory只查看两位, 所以有4个入口, 而tableA只查看第一位, 所以00, 01都是A, 10, 11属于B, C, 分裂后A也要查看两位, 所以就要拆分成A0, A1两个表, 此时还不用扩大</p>
+<blockquote>
+<p>什么时候Directory需要扩大</p>
+</blockquote>
+<p>当globalDepth == localDepth的时候, 再进行split扩容, 就需要进行扩大了<br>
+此时说明diorectory已经没有更多的table可以拆分了, Directory需要翻倍</p>
+</li>
+</ol>
+<h5 id="map怎么实现并发安全">map怎么实现并发安全</h5>
+<ol>
+<li>sync.Mutex: 实现起来简单</li>
+<li>sync.RWMutex: 允许并发读, 不允许并发写, 明显读多写少的时候用</li>
+<li>sync.Map
+<ul>
+<li>key 相对稳定，<strong>读很多、写很少</strong></li>
+<li>或不同 goroutine 操作的 key 集合相对独立</li>
+<li>希望减少大量显式锁竞争</li>
+</ul>
+</li>
+</ol>
+<h5 id="map里面的key为什么必须可比较">map里面的key为什么必须可比较</h5>
+<p>它不光需要计算hash, hash值匹配到对应的位置之后还要进行== 比较</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io">tangerineyu</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://tangerineyu.github.io/2026/08/24/go%E5%BA%95%E5%B1%82/map/">https://tangerineyu.github.io/2026/08/24/go%E5%BA%95%E5%B1%82/map/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://tangerineyu.github.io" target="_blank">EurekaYu</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/go%E5%BA%95%E5%B1%82/">go底层</a></div><div class="post-share"><div class="social-share" data-image="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://lib.baomitu.com/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://lib.baomitu.com/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/23/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" title="单例模式"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">单例模式</div></div><div class="info-2"><div class="info-item-1">适用场景 一些实例化很耗费资源的类, 比如线程池, 协程池 一些只允许存在一个实例的类, 比如日志管理模块 实现方式 饿汉式 一开始就完成单例的初始化 实现流程 12345678910111213141516171819var s *demofunc init() &#123;	s = newDemo()&#125;type demo struct &#123;&#125;func newDemo() *demo &#123;	return &amp;demo&#123;&#125;&#125;func (s *demo)Work &#123;	&#125;func GetDemo() *demo &#123;	return s&#125; 代码规范性讨论  demo是包内不可导出的类型, 在包内获取到了, 也不能作为入参或者出参进行传递 demo对外暴露, 混淆了不可导出类的边界与定位 处理方法 在不可导出单例类基础上 包上一层interface, 然后将这个inerface作为返回参数类型  123456type Instace interface...</div></div></div></a><a class="pagination-related" href="/2026/08/25/go%E5%9F%BA%E7%A1%80/panic/" title="panic"><img class="cover" src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">panic</div></div><div class="info-2"><div class="info-item-1">panic用于表示程序无法继续运行的严重错误 panic使用defer + recover()函数进行捕获, recover只能在defer调用的函数中生效 recover只能捕获同一个goroutinue的panic 123456789101112func main() &#123;	defer func() &#123;		fmt.Println(recover())	&#125;()	go func() &#123;		panic(&quot;goroutine panic&quot;)	&#125;()	select &#123;&#125;&#125; 这里就捕获不到gouroutinue panic这个错误 原因就是recover在main, 而panic发生在别的goroutinue 这样就可以捕获 1234567891011121314151617func run() &#123;	defer func() &#123;		if err := recover(); err != nil...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="twikoo-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/5.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">tangerineyu</div><div class="author-info-description">爱非虚妄，梦不荒唐</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/tangerineyu"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客，如果有什么加载不出来Ctrl + F5 / 刷新页面也许能解决</div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#hmap"><span class="toc-number">1.</span> <span class="toc-text">hmap</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#bmap"><span class="toc-number">1.1.</span> <span class="toc-text">bmap</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#tophash"><span class="toc-number">1.2.</span> <span class="toc-text">tophash</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#hash0"><span class="toc-number">1.3.</span> <span class="toc-text">hash0</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#overflow-bucket"><span class="toc-number">1.4.</span> <span class="toc-text">overflow bucket</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#noverflow"><span class="toc-number">1.5.</span> <span class="toc-text">noverflow</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#oldbuckets"><span class="toc-number">1.6.</span> <span class="toc-text">oldbuckets</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#nevacuate"><span class="toc-number">1.7.</span> <span class="toc-text">nevacuate</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#QA"><span class="toc-number">1.8.</span> <span class="toc-text">QA</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#swisstable"><span class="toc-number">2.</span> <span class="toc-text">swisstable</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">整体结构</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%BA%90%E7%A0%81"><span class="toc-number">2.2.</span> <span class="toc-text">核心源码</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#group"><span class="toc-number">2.3.</span> <span class="toc-text">group</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#hash"><span class="toc-number">2.4.</span> <span class="toc-text">hash</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#control-word"><span class="toc-number">2.5.</span> <span class="toc-text">control word</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Directory"><span class="toc-number">2.6.</span> <span class="toc-text">Directory</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#globalDepth%E5%92%8ClocalDepth"><span class="toc-number">2.7.</span> <span class="toc-text">globalDepth和localDepth</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%89%A9%E5%AE%B9"><span class="toc-number">2.8.</span> <span class="toc-text">扩容</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#map%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8"><span class="toc-number">2.9.</span> <span class="toc-text">map怎么实现并发安全</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#map%E9%87%8C%E9%9D%A2%E7%9A%84key%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BF%85%E9%A1%BB%E5%8F%AF%E6%AF%94%E8%BE%83"><span class="toc-number">2.10.</span> <span class="toc-text">map里面的key为什么必须可比较</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/08/26/go%E5%9F%BA%E7%A1%80/go1.27/" title="Go1.27"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go1.27"/></a><div class="content"><a class="title" href="/2026/08/26/go%E5%9F%BA%E7%A1%80/go1.27/" title="Go1.27">Go1.27</a><time datetime="2026-08-26T16:00:00.000Z" title="发表于 2026-08-27 00:00:00">2026-08-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/25/go%E5%9F%BA%E7%A1%80/defer/" title="defer"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="defer"/></a><div class="content"><a class="title" href="/2026/08/25/go%E5%9F%BA%E7%A1%80/defer/" title="defer">defer</a><time datetime="2026-08-25T16:00:00.000Z" title="发表于 2026-08-26 00:00:00">2026-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/25/go%E5%9F%BA%E7%A1%80/panic/" title="panic"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="panic"/></a><div class="content"><a class="title" href="/2026/08/25/go%E5%9F%BA%E7%A1%80/panic/" title="panic">panic</a><time datetime="2026-08-25T16:00:00.000Z" title="发表于 2026-08-26 00:00:00">2026-08-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/24/go%E5%BA%95%E5%B1%82/map/" title="map底层原理"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="map底层原理"/></a><div class="content"><a class="title" href="/2026/08/24/go%E5%BA%95%E5%B1%82/map/" title="map底层原理">map底层原理</a><time datetime="2026-08-24T16:00:00.000Z" title="发表于 2026-08-25 00:00:00">2026-08-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/23/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" title="单例模式"><img src="https://eurekayu.oss-cn-hangzhou.aliyuncs.com/4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单例模式"/></a><div class="content"><a class="title" href="/2026/08/23/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" title="单例模式">单例模式</a><time datetime="2026-08-23T16:00:00.000Z" title="发表于 2026-08-24 00:00:00">2026-08-24</time></div></div></div></div><div class="card-widget" id="card-poem"><div id="poem_sentence"></div><div id="poem_info"><div id="poem_dynasty"></div><div id="poem_author"></div></div></div><script src="https://cdn.jsdelivr.net/npm/js-heo@1.0.11/poem/jinrishici.js" charset="utf-8"></script><script type="text/javascript">jinrishici.load(function(result) {
+var sentence = document.querySelector("#poem_sentence")
+var author = document.querySelector("#poem_author")
+var dynasty = document.querySelector("#poem_dynasty")
+
+var sentenceText = result.data.content
+sentenceText = sentenceText.substr(0, sentenceText.length - 1);
+sentence.innerHTML = sentenceText
+dynasty.innerHTML = result.data.origin.dynasty
+author.innerHTML = result.data.origin.author + '《' + result.data.origin.title + '》'
+});</script></div></div></main><footer id="footer" style="background-image: url(https://eurekayu.oss-cn-hangzhou.aliyuncs.com/2.jpg);"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2026 By tangerineyu</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">浙ICP备2026072681号-1</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>(async () => {
+  const showKatex = () => {
+    document.querySelectorAll('#article-container .katex').forEach(el => el.classList.add('katex-show'))
+  }
+
+  if (!window.katex_js_css) {
+    window.katex_js_css = true
+    await btf.getCSS('https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css')
+    if (false) {
+      await btf.getScript('https://cdn.jsdelivr.net/npm/katex/dist/contrib/copy-tex.min.js')
+    }
+  }
+
+  showKatex()
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.isShuoshuo
+  const option = null
+
+  const getCount = () => {
+    const countELement = document.getElementById('twikoo-count')
+    if(!countELement) return
+    twikoo.getCommentsCount({
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countELement.textContent = res[0].count
+    }).catch(err => {
+      console.error(err)
+    })
+  }
+
+  const init = (el = document, path = location.pathname) => {
+    twikoo.init({
+      el: el.querySelector('#twikoo-wrap'),
+      envId: 'https://yublog-eosin.vercel.app/',
+      region: '',
+      onCommentLoaded: () => {
+        btf.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'))
+      },
+      ...option,
+      path: isShuoshuo ? path : (option && option.path) || path
+    })
+
+    
+
+    isShuoshuo && (window.shuoshuoComment.destroyTwikoo = () => {
+      if (el.children.length) {
+        el.innerHTML = ''
+        el.classList.add('no-comment')
+      }
+    })
+  }
+
+  const loadTwikoo = (el, path) => {
+    if (typeof twikoo === 'object') setTimeout(() => init(el, path), 0)
+    else btf.getScript('https://cdn.jsdelivr.net/npm/twikoo/dist/twikoo.all.min.js').then(() => init(el, path))
+  }
+
+  if (isShuoshuo) {
+    'Twikoo' === 'Twikoo'
+      ? window.shuoshuoComment = { loadComment: loadTwikoo }
+      : window.loadOtherComment = loadTwikoo
+    return
+  }
+
+  if ('Twikoo' === 'Twikoo' || !false) {
+    if (false) btf.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo)
+    else loadTwikoo()
+  } else {
+    window.loadOtherComment = loadTwikoo
+  }
+})()</script></div><script data-pjax defer src="/js/my.js"></script><script defer="defer" id="ribbon" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-ribbon.min.js" size="150" alpha="0.6" zIndex="-1" mobile="false" data-click="true"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
