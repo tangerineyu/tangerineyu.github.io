@@ -1,0 +1,135 @@
+/* The overlay is opt-in; without JavaScript or after an error the blog stays usable. */
+#home-entrance { display: none; }
+/* Keep the homepage width unchanged when the entrance releases its scroll lock. */
+html { scrollbar-gutter: stable; }
+html[data-home-entrance],
+html[data-home-entrance] body { overflow: hidden; }
+html[data-home-entrance] .pace { visibility: hidden; }
+html[data-home-entrance] #home-entrance {
+  --he-bg: #f1f0eb;
+  --he-ink: #282f32;
+  --he-muted: #66747b;
+  --he-rain: #697d85;
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+  display: block;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--he-ink);
+  font-family: 'Maple Mono NF CN Web', ui-monospace, Consolas, monospace;
+}
+html[data-theme='dark'][data-home-entrance] #home-entrance {
+  --he-bg: #080a0b;
+  --he-ink: #e4e8eb;
+  --he-muted: #99a3ab;
+  --he-rain: #91a4ae;
+}
+#home-entrance *,
+#home-entrance *::before,
+#home-entrance *::after { box-sizing: border-box; }
+#home-entrance [hidden] { display: none !important; }
+#home-entrance .he-shutters {
+  position: absolute;
+  inset: 0;
+  perspective: 100vmax;
+  background: var(--he-bg);
+}
+#home-entrance[data-opening] .he-shutters { background: transparent; }
+#home-entrance .he-shutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: calc(6.25% + 1px);
+  background: var(--he-bg);
+  backface-visibility: hidden;
+  transform-origin: center;
+}
+#home-entrance .he-rain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+#home-entrance .he-tunnel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--he-muted);
+  stroke-width: .7;
+  opacity: 0;
+  pointer-events: none;
+}
+#home-entrance .he-sphere-box {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+#home-entrance .he-sphere {
+  width: min(72vmin, 540px);
+  height: min(72vmin, 540px);
+  overflow: visible;
+  fill: none;
+  color: var(--he-muted);
+}
+#home-entrance .he-sphere ellipse { stroke: currentColor; fill: none; }
+#home-entrance .he-greet {
+  position: absolute;
+  left: 50%;
+  bottom: 5%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  max-width: calc(100% - 40px);
+  transform: translateX(-50%);
+  opacity: 0;
+}
+#home-entrance .he-word {
+  position: relative;
+  font-size: clamp(18px, 2.5vw, 25px);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+#home-entrance .he-ghost { visibility: hidden; }
+#home-entrance .he-face {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex: none;
+  overflow: hidden;
+}
+#home-entrance .he-band { position: absolute; inset: 0; opacity: 0; }
+#home-entrance .he-face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 72%;
+  filter: grayscale(.65);
+}
+#home-entrance .he-pixels {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+@media (max-width: 600px) {
+  #home-entrance .he-sphere { width: 78vw; height: 78vw; }
+  #home-entrance .he-greet { gap: 20px; bottom: max(5%, 24px); }
+  #home-entrance .he-face { width: 76px; height: 76px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-home-entrance] #home-entrance { display: none; }
+  html[data-home-entrance], html[data-home-entrance] body { overflow: revert; }
+}

@@ -1,0 +1,89 @@
+/* Two independent faces roll through the baseline, staggered in a four-pass directional cycle. */
+#page-header.full_page #site-info {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#page-header.full_page #site-title.staggered-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  width: 100%;
+  /* Reverse both vertical travel and rotation for the right-to-left passes. */
+  --stagger-roll-direction: 1;
+  --stagger-duration: 620ms;
+  --stagger-delay: 135ms;
+  --stagger-cycle-gap: 1200ms;
+  --stagger-initial-delay: 900ms;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+#page-header.full_page .staggered-text__cell {
+  display: block;
+  position: relative;
+  height: 1.5em;
+  perspective: 8em;
+}
+
+/* Keep natural widths and the baseline stable throughout the animation. */
+#page-header.full_page .staggered-text__cell::before {
+  content: attr(data-character);
+  display: block;
+  height: 1.5em;
+  line-height: 1.5;
+  visibility: hidden;
+}
+
+#page-header.full_page .staggered-text__track {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+#page-header.full_page .staggered-text__glyph {
+  position: absolute;
+  inset: 0;
+  display: block;
+  height: 1.5em;
+  line-height: 1.5;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-origin: 50% 50%;
+}
+
+#page-header.full_page .staggered-text__glyph:last-child {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #page-header.full_page .is-flipping .staggered-text__glyph {
+    animation-duration: var(--stagger-active-duration, var(--stagger-duration));
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+  }
+
+  #page-header.full_page .is-flipping .staggered-text__glyph:first-child {
+    animation-name: eureka-title-out;
+  }
+
+  #page-header.full_page .is-flipping .staggered-text__glyph:last-child {
+    animation-name: eureka-title-in;
+  }
+
+  @keyframes eureka-title-out {
+    0% { transform: translateY(0) rotateX(0); opacity: 1; filter: blur(0); }
+    20% { transform: translateY(calc(-0.08em * var(--stagger-roll-direction))) rotateX(calc(12deg * var(--stagger-roll-direction))); opacity: 0.8; filter: blur(0.018em); }
+    45% { transform: translateY(calc(-0.3em * var(--stagger-roll-direction))) rotateX(calc(55deg * var(--stagger-roll-direction))); opacity: 0.3; filter: blur(0.045em); }
+    65%, 100% { transform: translateY(calc(-0.48em * var(--stagger-roll-direction))) rotateX(calc(90deg * var(--stagger-roll-direction))); opacity: 0; filter: blur(0.06em); }
+  }
+
+  @keyframes eureka-title-in {
+    0%, 18% { transform: translateY(calc(0.48em * var(--stagger-roll-direction))) rotateX(calc(-90deg * var(--stagger-roll-direction))); opacity: 0; filter: blur(0.06em); }
+    40% { transform: translateY(calc(0.3em * var(--stagger-roll-direction))) rotateX(calc(-55deg * var(--stagger-roll-direction))); opacity: 0.25; filter: blur(0.045em); }
+    65% { transform: translateY(calc(0.1em * var(--stagger-roll-direction))) rotateX(calc(-20deg * var(--stagger-roll-direction))); opacity: 0.75; filter: blur(0.022em); }
+    85% { transform: translateY(calc(0.015em * var(--stagger-roll-direction))) rotateX(calc(-3deg * var(--stagger-roll-direction))); opacity: 0.98; filter: blur(0.005em); }
+    100% { transform: translateY(0) rotateX(0); opacity: 1; filter: blur(0); }
+  }
+}
